@@ -254,6 +254,30 @@ button, input { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: no-preference) {
   .seat, .chip, .btn { transition: background-color .12s, border-color .12s, opacity .12s; }
 }
+/* ---- nâng cấp nhẹ UI/UX + tier ---- */
+.tr { display: inline-grid; place-items: center; min-width: 20px; height: 18px; padding: 0 5px; border-radius: 5px; font-size: 11px; font-weight: 700; font-style: normal; text-decoration: none; line-height: 1; vertical-align: middle; color: #fff; }
+.tr.S { background: #f4c430; color: #2b2200; } .tr.A { background: #ef476f; } .tr.B { background: #4895ef; } .tr.C { background: #2a9d8f; } .tr.D { background: #8d99ae; }
+.pcard, .dc { position: relative; } .pcard .tr, .dc .tr { position: absolute; top: 6px; right: 6px; }
+.dh h3 .tr { margin-left: 6px; height: 20px; font-size: 12px; }
+.btn { transition: transform .08s, border-color .12s, background-color .12s, box-shadow .12s; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn.primary:hover { box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 45%, transparent); }
+#bvb-open { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.bbar .btn { min-width: 34px; }
+.pcard { transition: border-color .12s, transform .12s; } .pcard:hover { border-color: var(--accent); }
+.pcard:focus-visible, .pv-chips .btn:focus-visible, .bbar .btn:focus-visible { outline: 3px solid var(--hl); outline-offset: 2px; }
+.pv-grid { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); }
+.pv-chips { scrollbar-width: thin; }
+.bresult .acts .btn { min-height: 38px; }
+@media (max-width: 760px) { .tools { width: 100%; } .tools .btn { flex: 1 1 auto; height: 40px; } .bbar .btn { height: 36px; } .btitle { font-size: 19px; } }
+@media (prefers-reduced-motion: reduce) { .dc, .hb .g, .btn, .pcard { transition: none !important; } }
+.sheet.wide { width: min(600px, 100%); }
+.cm-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cm-col { border: 2px solid; border-radius: 10px; padding: 10px; min-width: 0; } .cm-col.t0 { border-color: #3a86ff; } .cm-col.t1 { border-color: #ef476f; }
+.cm-col .muted { line-height: 1.5; max-height: 150px; overflow: auto; }
+.fld select { width: 100%; height: 38px; padding: 0 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); outline: none; }
+.fld select:focus { border-color: var(--accent); }
+@media (max-width: 520px) { .cm-cols { grid-template-columns: 1fr; } }
 </style>
 
 <div class="wrap">
@@ -269,6 +293,7 @@ button, input { font: inherit; color: inherit; }
       <button class="btn" id="reset" type="button">Đặt lại</button>
       <button class="btn" id="bungee-open" type="button">Bungee</button>
       <button class="btn" id="bvb-open" type="button">Ball vs Ball</button>
+      <button class="btn" id="cm-open" type="button">Tự chọn trận</button>
       <button class="btn" id="pv-open" type="button">Bảng sức mạnh</button>
       <button class="btn" id="add" type="button">Thêm bạn</button>
       <button class="btn primary" id="export" type="button">Xuất seats.js</button>
@@ -327,8 +352,9 @@ button, input { font: inherit; color: inherit; }
 <div class="bungee" id="bvb" hidden>
   <canvas id="bvc"></canvas>
   <div class="bbar">
-    <div class="pill"><span class="btitle">Ball vs Ball bốc thăm</span><span id="bvs"></span></div>
+    <div class="pill"><span class="btitle">Ball vs Ball · BO3</span><span id="bvs"></span></div>
     <div class="pill">
+      <button class="btn" id="bvpause" type="button" aria-label="Tạm dừng">⏸</button>
       <button class="btn" id="bvmute" type="button" aria-label="Bật/tắt âm thanh">🔊</button>
       <button class="btn" id="bvpv" type="button">Bảng sức mạnh</button>
       <button class="btn" id="bvskip" type="button">Tua nhanh x3</button>
@@ -341,9 +367,19 @@ button, input { font: inherit; color: inherit; }
 </div>
 <div class="pv" id="pv" hidden>
   <div class="pv-box">
-    <div class="pv-head"><h2>Bảng sức mạnh · 42 loại ball</h2><input id="pvq" type="search" placeholder="Tìm ball" autocomplete="off"><button class="btn" id="pvclose" type="button">Đóng</button></div>
+    <div class="pv-head"><h2>Bảng sức mạnh · 48 loại ball</h2><input id="pvq" type="search" placeholder="Tìm ball" autocomplete="off"><button class="btn" id="pvclose" type="button">Đóng</button></div>
     <div class="pv-chips" id="pvc"></div>
     <div class="pv-main"><aside class="pv-detail" id="pvd"></aside><div class="pv-grid" id="pvg"></div></div>
+  </div>
+</div>
+<div class="scrim" id="cm" hidden>
+  <div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <h3 id="cmTitle">Trận tự chọn</h3>
+    <div class="cm-cols">
+      <div class="cm-col t0"><label class="fld"><span>Người chơi 1</span><select id="cmS0"></select></label><label class="fld"><span>Sức mạnh</span><select id="cmB0"></select></label><p class="muted" id="cmD0"></p></div>
+      <div class="cm-col t1"><label class="fld"><span>Người chơi 2</span><select id="cmS1"></select></label><label class="fld"><span>Sức mạnh</span><select id="cmB1"></select></label><p class="muted" id="cmD1"></p></div>
+    </div>
+    <div class="acts"><div class="grp"><button class="btn" id="cmRand" type="button">Ngẫu nhiên</button></div><div class="grp"><button class="btn" id="cmCancel" type="button">Hủy</button><button class="btn primary" id="cmGo" type="button">Bắt đầu đấu</button></div></div>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -975,116 +1011,251 @@ button, input { font: inherit; color: inherit; }
      Bốc 2 bạn thật sự ngẫu nhiên ngay lúc "chốt" từng ô (không chọn trước). Mỗi vòng mỗi bạn bốc 3 bóng, chọn 1.
      Mọi sức mạnh có biểu tượng, thanh hồi chiêu và số sát thương hiện trên đầu bóng. Máu về 0 mất 1 tim; hết 3 tim là thua. */
   var BVB = null, bvbDone = [], BR = 31;  /* bán kính bóng (đã tăng ~20%) */
+  var HEARTS = 2, SHRINK_AT = 22;  /* BO3: ai thắng 2 hiệp trước thì thắng trận; sàn thu nhỏ sau 22s */
+  /* [tên, màu, năng lực, tier (D→S), ảnh tuỳ chọn]. Viruss: đặt file viruss.jpg cạnh index.html để thay biểu tượng. */
   var BALLS = [
-    ['Shackles', '#7d8597', { root: [4.5, 1.6, 9], hp: 1.1 }], ['Spider', '#d9d9e3', { w: [5, 7, 38] }], ['Laser', '#ff4d6d', { w: [7, 5, 24], sp: 1.1 }],
-    ['Vampire', '#c1121f', { ls: 4 }], ['Conductor', '#ffd60a', { gr: 0.25, sp: 1.12 }], ['Zone', '#e5383b', { dr: [2.5, 6, 6, 64] }],
-    ['Glass', '#a8dadc', { sh: [2.8, 4, 5] }], ['Dice', '#f1f1f1', { dr: [2, 4, 7, 30], rn: [0.6, 1.6] }], ['Hive', '#f4a261', { sh: [2.2, 2.5, 2, 1], dot: [2, 3] }],
-    ['Thief', '#6c757d', { sh: [2.6, 4, 1], lo: 1 }], ['Snake', '#95d5b2', { kb: 2.2, gr: 0.15 }], ['Electric', '#ffee32', { st: 1 }],
-    ['Cannon', '#495057', { sh: [2.4, 6, 1] }], ['Ice Cone', '#90e0ef', { dr: [3, 4, 5, 56], st: 0.5 }], ['Bomb', '#fb5607', { kb: 3, x: 5 }],
-    ['Harpoon', '#4895ef', { pl: 4.5 }], ['Virus', '#80b918', { dot: [3.5, 4] }], ['Range', '#ff9f1c', { zn: [5, 70] }], ['Beam', '#e0aaff', { sh: [3.2, 9, 1] }],
-    ['Axe', '#b5651d', { orb: [1, 6], lo: 1 }], ['Apple', '#e63946', { hl: [3.5, 6], sh: [3, 3, 1] }], ['Frost', '#bde0fe', { dr: [1.2, 3, 4, 34], st: 0.4 }],
-    ['Blade', '#adb5bd', { orb: [2, 4] }], ['Big Spike', '#8d6e63', { w: [5, 8, 22] }], ['Reforge', '#ff7b00', { gr: 0.3 }],
-    ['Poison Spike', '#7cb518', { w: [3, 8, 22], dot: [2, 3] }], ['Bow', '#cfa86a', { sh: [2.8, 7, 1] }], ['Cactus', '#2d6a4f', { dr: [2.2, 4, 5, 36], kb: 1.5 }],
-    ['Hook', '#6d6875', { pl: 5 }], ['Electro King', '#f9c74f', { st: 0.8, gr: 0.1 }], ['Fibonacci', '#ffb703', { gr: 0.45 }], ['Burst', '#ff6d00', { bs: 3.2 }],
-    ['Spear', '#9ca3af', { kb: 2.5, x: 4 }], ['Charge', '#a78bfa', { ch: 1 }], ['Chess', '#e9ecef', { rn: [0.5, 1.7] }], ['WDC', '#ced4da', { rn: [0, 3] }],
-    ['Cell', '#52b788', { hp: 1.4 }], ['Verity', '#9d4edd', { lu: 0.3 }], ['Potion', '#b5179e', { dr: [2.4, 4, 6, 40], rn: [0.5, 1.5] }],
-    ['Acid', '#a7c957', { dr: [1.8, 4, 7, 34] }], ['Machine Gun', '#343a40', { sh: [0.55, 1.6, 1] }], ['Ray', '#ff5d8f', { w: [3, 6, 18], sh: [3.5, 4, 1] }]
+    ['Shackles', '#7d8597', { root: [4.5, 1.6, 9], hp: 1.1 }, 'A'],
+    ['Spider', '#d9d9e3', { w: [0, 10, 38], web: [4, 0.55] }, 'B'],
+    ['Laser', '#ff4d6d', { lz: [5, 9, 6], sp: 1.5 }, 'C'],
+    ['Vampire', '#c1121f', { ls: 12, hold: 2 }, 'B'],
+    ['Conductor', '#ffd60a', { gr: 0.25, sp: 1.12 }, 'B'],
+    ['Zone', '#e5383b', { dr: [7, 3, 5, 62], pu: 520 }, 'D'],
+    ['Glass', '#a8dadc', { sh: [2.8, 4, 5], gl: [3, 2] }, 'S'],
+    ['Dice', '#f1f1f1', { rn: [1.1, 1.6] }, 'C'],
+    ['Hive', '#f4a261', { sh: [2.2, 2.5, 2, 1], pdot: [0.25, 3] }, 'A'],
+    ['Thief', '#6c757d', { sh: [2.6, 4, 1], lo: 1, ps: 1.25 }, 'D'],
+    ['Snake', '#95d5b2', { kb: 2.2, gr: 0.15 }, 'C'],
+    ['Electric', '#ffee32', { st: 1, bolt: [2.5, 2, 0.6] }, 'C'],
+    ['Cannon', '#495057', { sh: [2.4, 6, 1], ps: 1.3, pz: 1.3 }, 'C'],
+    ['Ice Cone', '#90e0ef', { dr: [3, 4, 5, 56], st: 0.5, sl: 0.5 }, 'C'],
+    ['Bomb', '#fb5607', { kb: 3, bomb: [4, 2.5, 12, 78] }, 'D'],
+    ['Harpoon', '#4895ef', { pl: 2.4, wd: [2, 0.1, 0.15], x: -3 }, 'A'],
+    ['Viruss', '#80b918', { horn: [5, 2, 0.9] }, 'B', 'viruss.jpg'],
+    ['Domain Expansion', '#ff9f1c', { dom: [18, 150, 10, 0.1, 1, 0.5, 8] }, 'B'],
+    ['Beam', '#e0aaff', { bm: [5, 15, 41] }, 'S'],
+    ['Axe', '#b5651d', { orb: [1, 6], lo: 1, os: 1.2 }, 'B'],
+    ['Apple', '#e63946', { hl: [3.5, 6], sh: [3, 3, 1], ps: 1.3 }, 'B'],
+    ['Frost', '#bde0fe', { dr: [1.2, 3, 4, 34], st: 0.4, sl: 0.75, fr: [6, 2] }, 'C'],
+    ['Blade', '#adb5bd', { orb: [2, 4], bl: [6, 5] }, 'B'],
+    ['Big Spike', '#8d6e63', { hp: 1.5, x: -6, dot: [0.25, 12, 'b'] }, 'D'],
+    ['Reforge', '#ff7b00', { gr: 0.3 }, 'B'],
+    ['Poison Spike', '#7cb518', { x: -6, dot: [0.15, 12] }, 'D'],
+    ['Bow', '#cfa86a', { sh: [2, 8, 1], ps: 1.25 }, 'B'],
+    ['Hook', '#6d6875', { pl: 4, hk: 1 }, 'S'],
+    ['Electro King', '#f9c74f', { st: 0.8, gr: 0.1, bolt: [2.5, 3, 0.6] }, 'A'],
+    ['Fibonacci', '#ffb703', { gr: 0.5 }, 'A'],
+    ['Burst', '#ff6d00', { bs: 3.2, bsm: 2 }, 'B'],
+    ['Fighter', '#9ca3af', { kb: 2.5, x: 5 }, 'C'],
+    ['Charge', '#a78bfa', { ch: 1.75 }, 'C'],
+    ['Chess', '#e9ecef', { cs: 2.5, dm0: 1.3 }, 'C'],
+    ['Saitama Lỗi', '#ced4da', { rn: [0, 7] }, 'S'],
+    ['Cell', '#52b788', { hp: 2, dm0: 0.6 }, 'D'],
+    ['Verity', '#9d4edd', { hp: 1.5, tk: 0.8, vt: 1, dm0: 0.8 }, 'A'],
+    ['Potion', '#b5179e', { pot: [3, 2, 4, 60] }, 'D'],
+    ['Machine Gun', '#343a40', { sh: [0.3, 1.6, 1], ps: 1.35 }, 'A'],
+    ['Light Yagami', '#4a4e69', { ln: [21, 10, 0.8], dm0: 0.6 }, 'A'],
+    ['Nuke', '#c6ff00', { nk: 7 }, 'C'],
+    ['Lava', '#ff4500', { dr: [6, 5, 6.5, 48], ic: '🌋' }, 'D'],
+    ['Yuta Okkotsu', '#8ecae6', { yu: 3.5 }, 'B'],
+    ['Berserk', '#9b2226', { bz: 3 }, 'A'],
+    ['Priest', '#f1faee', { hp: 1.5, pr: [5, 0.12], dm0: 0.9 }, 'B'],
+    ['Princess', '#ff8fab', { hp: 0.75, kn: [4, 45] }, 'S'],
+    ['LilDragon', '#ff7f11', { hp: 1.1, fire: [3.5, 7] }, 'C'],
+    ['BabyBoo', '#ffafcc', { boo: [1, 15] }, 'B']
   ];
 
 
   /* ---------- SFX: tạo bằng Web Audio, không cần file âm thanh ---------- */
   var AC = null, SFX_ON = true, lastS = {};
   try { SFX_ON = localStorage.getItem('bvb-sfx') !== '0'; } catch (e) {}
+  var MB = null, BG = null, bgs = 0, curPan = 0;
   function ac() {
-    if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (!AC) {
+      try {
+        AC = new (window.AudioContext || window.webkitAudioContext)();
+        var cm = AC.createDynamicsCompressor(), mg = AC.createGain(), dl = AC.createDelay(0.6), fb = AC.createGain(), wt = AC.createGain(), lp = AC.createBiquadFilter();
+        cm.threshold.value = -18; cm.knee.value = 12; cm.ratio.value = 6; cm.attack.value = 0.004; cm.release.value = 0.2;
+        mg.gain.value = 0.95; dl.delayTime.value = 0.17; fb.gain.value = 0.32; wt.gain.value = 0.22; lp.type = 'lowpass'; lp.frequency.value = 3200;
+        MB = AC.createGain(); MB.connect(cm); MB.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wt); wt.connect(cm); cm.connect(mg); mg.connect(AC.destination);
+      } catch (e) { AC = null; MB = null; }
+    }
     if (AC && AC.state === 'suspended') AC.resume();
     return AC;
   }
-  function tone(f, d, type, vol, slide, delay) {
-    var a = ac(); if (!a) return;
-    var t = a.currentTime + (delay || 0), o = a.createOscillator(), g = a.createGain();
-    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+  /* tone: dao động + ADSR + trượt cao độ + rung (vib) + pan; mỗi lần phát lệch cao độ nhẹ để không bị lặp máy móc */
+  function tone(f, d, type, vol, slide, delay, pan, vib) {
+    var a = ac(); if (!a || !MB) return;
+    var t = a.currentTime + (delay || 0), o = a.createOscillator(), g = a.createGain(), pn = a.createStereoPanner ? a.createStereoPanner() : null;
+    f *= 1 + (Math.random() - 0.5) * 0.06; o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
     if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, f * slide), t + d);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + 0.02);
+    if (vib) { var lf = a.createOscillator(), lg = a.createGain(); lf.frequency.value = vib; lg.gain.value = f * 0.03; lf.connect(lg); lg.connect(o.frequency); lf.start(t); lf.stop(t + d + 0.03); }
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); if (pn) { pn.pan.value = pan !== undefined ? pan : curPan; g.connect(pn); pn.connect(MB); } else g.connect(MB);
+    o.start(t); o.stop(t + d + 0.03);
   }
-  function noise(d, vol, fc) {
-    var a = ac(); if (!a) return;
-    var n = Math.floor(a.sampleRate * d), buf = a.createBuffer(1, n, a.sampleRate), ch = buf.getChannelData(0), i;
-    for (i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / n);
-    var s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
-    f.type = 'lowpass'; f.frequency.value = fc || 1500; g.gain.value = vol || 0.2;
-    s.buffer = buf; s.connect(f); f.connect(g); g.connect(a.destination); s.start();
+  /* noise: bộ lọc (lowpass/highpass/bandpass) có quét tần số, dùng cho tiếng va đập, gió, nổ */
+  function noise(d, vol, fc, type, q, sweep, delay) {
+    var a = ac(); if (!a || !MB) return;
+    var n = Math.floor(a.sampleRate * d), buf = a.createBuffer(1, n, a.sampleRate), ch = buf.getChannelData(0), i, t = a.currentTime + (delay || 0);
+    for (i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 1.6);
+    var s = a.createBufferSource(), fl = a.createBiquadFilter(), g = a.createGain();
+    fl.type = type || 'lowpass'; fl.Q.value = q || 1; fl.frequency.setValueAtTime(fc || 1500, t);
+    if (sweep) fl.frequency.exponentialRampToValueAtTime(Math.max(40, (fc || 1500) * sweep), t + d);
+    g.gain.value = vol || 0.2; s.buffer = buf; s.connect(fl); fl.connect(g); g.connect(MB); s.start(t);
   }
   var SFXS = {
-    tick: function () { tone(900, 0.04, 'square', 0.04); },
-    lock: function () { tone(520, 0.12, 'triangle', 0.18); tone(780, 0.2, 'triangle', 0.18, 0, 0.1); },
-    win: function () { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.2, 'triangle', 0.15, 0, i * 0.09); }); },
-    go: function () { tone(440, 0.1, 'square', 0.1); tone(880, 0.25, 'square', 0.12, 0, 0.12); },
-    hit: function () { noise(0.09, 0.28, 900); tone(160, 0.1, 'sine', 0.25, 0.5); },
-    proj: function () { noise(0.06, 0.15, 3000); tone(500, 0.08, 'square', 0.08, 0.6); },
-    orb: function () { tone(1500, 0.06, 'sawtooth', 0.07, 0.5); },
-    haz: function () { tone(300, 0.08, 'sawtooth', 0.04); }, zn: function () { tone(330, 0.08, 'sine', 0.05); },
-    dot: function () { tone(240, 0.1, 'sine', 0.07, 0.7); }, root: function () { tone(200, 0.15, 'square', 0.1, 0.5); noise(0.1, 0.12, 2500); },
-    heal: function () { tone(700, 0.1, 'sine', 0.12); tone(1000, 0.14, 'sine', 0.12, 0, 0.08); },
-    stun: function () { tone(800, 0.25, 'sawtooth', 0.1, 0.3); }, shoot: function () { tone(900, 0.09, 'triangle', 0.1, 0.5); },
-    drop: function () { tone(180, 0.15, 'sine', 0.12, 0.5); }, pull: function () { tone(300, 0.2, 'sawtooth', 0.1, 2.5); },
-    dash: function () { noise(0.2, 0.15, 1500); tone(250, 0.2, 'sawtooth', 0.08, 3); }, poison: function () { tone(160, 0.25, 'sawtooth', 0.09, 1.8); },
-    ko: function () { noise(0.35, 0.3, 500); tone(220, 0.5, 'sawtooth', 0.2, 0.3); },
-    beep: function () { tone(880, 0.12, 'square', 0.1); }, alarm: function () { tone(300, 0.5, 'sawtooth', 0.13, 0.5); noise(0.5, 0.12, 300); }
+    tap: function () { tone(1400, 0.045, 'triangle', 0.07, 0.6); tone(2100, 0.03, 'sine', 0.03, 1, 0.015); },
+    pick: function () { tone(520, 0.08, 'triangle', 0.08, 1.5); },
+    drop2: function () { tone(260, 0.12, 'sine', 0.14, 0.5); noise(0.06, 0.1, 1200); },
+    tick: function () { tone(1100, 0.035, 'square', 0.035); tone(2200, 0.02, 'sine', 0.025); },
+    lock: function () { [523, 659, 784].forEach(function (f, i) { tone(f, 0.28, 'triangle', 0.11, 0, i * 0.04); }); tone(1568, 0.4, 'sine', 0.05, 0, 0.12); },
+    win: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.25, 'triangle', 0.13, 0, i * 0.09); tone(f * 2, 0.2, 'sine', 0.04, 0, i * 0.09 + 0.02); }); [523, 659, 784, 1047].forEach(function (f) { tone(f, 0.7, 'sawtooth', 0.04, 0, 0.5); }); noise(0.5, 0.05, 7000, 'highpass', 1, 0.6, 0.5); },
+    go: function () { tone(330, 0.1, 'square', 0.08); tone(660, 0.12, 'square', 0.09, 0, 0.1); tone(990, 0.3, 'sawtooth', 0.09, 1.5, 0.2); },
+    hit: function () { tone(130, 0.16, 'sine', 0.3, 0.4); noise(0.08, 0.3, 1400, 'lowpass', 1, 0.3); tone(900, 0.05, 'square', 0.06, 0.5); },
+    proj: function () { noise(0.07, 0.14, 3500, 'bandpass', 3, 0.5); tone(620, 0.09, 'square', 0.07, 0.5); },
+    orb: function () { tone(1700, 0.07, 'sawtooth', 0.05, 0.5); tone(2300, 0.05, 'sine', 0.04, 0.7, 0.02); },
+    haz: function () { tone(240, 0.12, 'sawtooth', 0.04, 0.7); }, zn: function () { tone(330, 0.09, 'sine', 0.05); tone(660, 0.07, 'sine', 0.03, 1, 0.03); },
+    dot: function () { tone(260, 0.14, 'sine', 0.07, 0.6, 0, undefined, 18); },
+    poison: function () { tone(170, 0.3, 'sawtooth', 0.08, 1.8, 0, undefined, 10); noise(0.2, 0.05, 800); },
+    root: function () { tone(2000, 0.05, 'square', 0.05, 0.5); tone(1500, 0.06, 'square', 0.05, 0.5, 0.05); tone(190, 0.18, 'square', 0.1, 0.5); noise(0.1, 0.1, 2500, 'highpass'); },
+    heal: function () { [660, 880, 1320].forEach(function (f, i) { tone(f, 0.18, 'sine', 0.1, 1, i * 0.06); }); },
+    stun: function () { tone(900, 0.3, 'sawtooth', 0.09, 0.3, 0, undefined, 24); noise(0.15, 0.08, 5000, 'highpass'); },
+    shoot: function () { tone(900, 0.1, 'triangle', 0.1, 0.4); noise(0.05, 0.06, 4000, 'highpass'); },
+    drop: function () { tone(200, 0.18, 'sine', 0.13, 0.5); tone(100, 0.2, 'sine', 0.1, 0.6, 0.04); },
+    pull: function () { tone(250, 0.3, 'sawtooth', 0.09, 3); noise(0.25, 0.07, 500, 'bandpass', 2, 4); },
+    dash: function () { noise(0.25, 0.16, 600, 'bandpass', 1.5, 6); tone(220, 0.22, 'sawtooth', 0.08, 3.5); },
+    ko: function () { noise(0.5, 0.32, 700, 'lowpass', 1, 0.2); tone(260, 0.6, 'sawtooth', 0.2, 0.25); tone(65, 0.7, 'sine', 0.3, 0.5); tone(130, 0.5, 'square', 0.06, 0.3, 0.05); },
+    beep: function () { tone(880, 0.12, 'square', 0.09); },
+    alarm: function () { tone(300, 0.5, 'sawtooth', 0.12, 0.5); tone(450, 0.5, 'sawtooth', 0.08, 0.5, 0.25); noise(0.4, 0.08, 400); },
+    beam: function () { tone(200, 0.5, 'sawtooth', 0.1, 4); tone(400, 0.5, 'sine', 0.1, 4); noise(0.4, 0.1, 2000, 'bandpass', 2, 3); },
+    bolt: function () { noise(0.18, 0.2, 6000, 'highpass'); tone(1800, 0.12, 'sawtooth', 0.09, 0.2); tone(90, 0.2, 'square', 0.1, 0.5); },
+    fire: function () { noise(0.3, 0.18, 1800, 'bandpass', 0.8, 0.4); tone(150, 0.3, 'sawtooth', 0.06, 0.6); },
+    bomb: function () { tone(110, 0.4, 'sine', 0.35, 0.3); noise(0.45, 0.35, 900, 'lowpass', 1, 0.2); },
+    slash: function () { noise(0.1, 0.18, 5000, 'highpass'); tone(1400, 0.1, 'sawtooth', 0.07, 0.4); },
+    wall: function () { tone(150, 0.08, 'sine', 0.1, 0.6); noise(0.04, 0.08, 2800, 'highpass'); },
+    hook: function () { tone(1200, 0.06, 'square', 0.06, 0.5); tone(300, 0.15, 'sawtooth', 0.08, 2.5); },
+    boo: function () { tone(700, 0.1, 'triangle', 0.1, 1.5); tone(1050, 0.14, 'triangle', 0.1, 1.3, 0.08); },
+    harpoon: function () { noise(0.22, 0.15, 3000, 'bandpass', 2, 0.4); tone(700, 0.2, 'sawtooth', 0.07, 0.4); tone(1400, 0.1, 'square', 0.03, 0.5, 0.02); },
+    harp: function () { tone(1800, 0.04, 'square', 0.05, 0.6); tone(220, 0.05, 'sine', 0.07, 0.5); }
   };
-  var GAP = { hit: 0.05, proj: 0.06, orb: 0.12, haz: 0.35, dot: 0.35, zn: 0.35, shoot: 0.05 };
-  function sfx(n) {
+  var GAP = { hit: 0.05, proj: 0.06, orb: 0.12, haz: 0.35, dot: 0.35, zn: 0.35, shoot: 0.05, harp: 0.09, wall: 0.06, bolt: 0.1, slash: 0.08, root: 0.15, tick: 0.02, tap: 0.03 };
+  function sfx(n, pan) {
     if (!SFX_ON || !SFXS[n]) return;
     var t = performance.now(), g = (GAP[n] || 0.03) * 1000;
     if (lastS[n] && t - lastS[n] < g) return;
-    lastS[n] = t; try { SFXS[n](); } catch (e) {}
+    lastS[n] = t; curPan = pan || 0; try { SFXS[n](); } catch (e) {}
   }
-  var ICON = { hp: '❤️', sp: '💨', lo: '😡', ls: '🩸', x: '💥', kb: '🥊', st: '⚡', dot: '☠️', gr: '📈', rn: '🎲', ch: '🔋', lu: '🍀', w: '🧱', dr: '🕳️', zn: '🔴', sh: '🏹', orb: '🗡️', root: '⛓️', hl: '💚', pl: '🪝', bs: '🚀' };
-  var ORDER = ['root', 'pl', 'bs', 'sh', 'orb', 'dr', 'w', 'zn', 'st', 'dot', 'ls', 'hl', 'gr', 'ch', 'lu', 'lo', 'rn', 'kb', 'x', 'hp', 'sp'];
-  var TAG = { sh: 'Bắn đạn', orb: 'Lưỡi xoay', w: 'Bẫy', dr: 'Bẫy', zn: 'Vùng sát thương', st: 'Khống chế', root: 'Khống chế', pl: 'Khống chế', kb: 'Khống chế', dot: 'Độc', ls: 'Hồi máu', hl: 'Hồi máu', gr: 'Tăng trưởng', lu: 'Tăng trưởng', lo: 'Tăng trưởng', ch: 'Tăng trưởng', bs: 'Cận chiến', x: 'Cận chiến', rn: 'Ngẫu nhiên', hp: 'Trâu bò', sp: 'Tốc độ' };
-  var SRC = { hit: ['👊', '#ff6b6b'], proj: ['🏹', '#ffa94d'], orb: ['🗡️', '#dee2e6'], haz: ['🕳️', '#ff8787'], dot: ['☠️', '#94d82d'], zn: ['🔴', '#ff6b6b'], root: ['⛓️', '#adb5bd'] };
+  /* nhạc nền tự tạo: kick + hat + bass đổi hợp âm; nhanh/căng hơn khi sàn thu nhỏ */
+  function bgm(on) {
+    if (BG) { clearInterval(BG); BG = null; }
+    if (!on || !SFX_ON) return;
+    ac();
+    BG = setInterval(function () {
+      if (!SFX_ON || !BVB || !AC) { bgm(0); return; }
+      var s = bgs++ % 32, st = Math.floor(bgs / 32) % 4, fight = BVB.phase === 'fight', hot = fight && BVB.T > SHRINK_AT, root = [110, 98, 87.3, 98][st];
+      if (fight) {
+        if (s % 8 === 0 || (hot && s % 8 === 4)) tone(52, 0.18, 'sine', 0.16, 0.5, 0, 0);
+        if (s % 4 === 2) noise(0.03, 0.05, 8000, 'highpass');
+        if (s % 2 === 0) tone(root * (s % 8 < 4 ? 1 : 1.5), 0.14, 'sawtooth', hot ? 0.045 : 0.03, 0.9, 0, 0);
+        if (s % 16 === 8) tone(root * 4, 0.3, 'triangle', 0.03, 1, 0, 0.3);
+      } else if (s % 8 === 0) tone(root * 2, 0.8, 'sine', 0.035, 1, 0, -0.2);
+    }, 125);
+  }
+  var ICON = { ln: '📓', nk: '☢️', yu: '🧿', vt: '🔱', kn: '🏇', dom: '⚔️', fire: '🔥', boo: '🎤', bz: '😤', pr: '✝️', cs: '♞', pot: '🧪', bomb: '💣', bm: '🌀', lz: '🔦', hold: '🔒', web: '🕸️', horn: '🦌',
+    root: '⛓️', pl: '🪝', bs: '🚀', sh: '🏹', bolt: '⚡', orb: '🗡️', dr: '🕳️', w: '🧱', st: '⚡', dot: '☠️', ls: '🩸', hl: '💚', gr: '📈', ch: '🔋', lo: '😡', rn: '🎲', kb: '🥊', x: '💥', hp: '❤️', tk: '🛡️', dm0: '🎚️', sp: '💨',
+    ps: '💨', pz: '⭕', gl: '💎', pdot: '☠️', sl: '🧊', fr: '❄️', pu: '🌀', os: '🪓', bsm: '🚀', wd: '🧱', hk: '🪝', bl: '🗡️' };
+  var ORDER = ['ln', 'nk', 'yu', 'vt', 'kn', 'dom', 'fire', 'boo', 'bz', 'pr', 'cs', 'pot', 'bomb', 'bm', 'lz', 'hold', 'web', 'horn', 'root', 'pl', 'bs', 'sh', 'bolt', 'orb', 'dr', 'w', 'st', 'dot', 'ls', 'hl', 'gr', 'ch', 'lo', 'rn', 'kb', 'x', 'hp', 'tk', 'dm0', 'sp',
+    'bl', 'ps', 'pz', 'gl', 'pdot', 'sl', 'fr', 'pu', 'os', 'bsm', 'wd', 'hk'];
+  var TAG = { ln: 'Đặc biệt', nk: 'Đặc biệt', yu: 'Đặc biệt', boo: 'Đặc biệt', vt: 'Trâu bò', kn: 'Triệu hồi', dom: 'Vùng sát thương', fire: 'Tia/Phép', bm: 'Tia/Phép', lz: 'Tia/Phép', bolt: 'Tia/Phép',
+    sh: 'Bắn đạn', pot: 'Bắn đạn', orb: 'Lưỡi xoay', w: 'Bẫy', dr: 'Bẫy', bomb: 'Bẫy', st: 'Khống chế', root: 'Khống chế', pl: 'Khống chế', hold: 'Khống chế', web: 'Khống chế', horn: 'Khống chế', kb: 'Khống chế',
+    dot: 'Độc', ls: 'Hồi máu', hl: 'Hồi máu', pr: 'Hồi máu', gr: 'Tăng trưởng', lo: 'Tăng trưởng', ch: 'Tăng trưởng', bz: 'Tăng trưởng', bs: 'Cận chiến', x: 'Cận chiến', cs: 'Cận chiến',
+    rn: 'Ngẫu nhiên', hp: 'Trâu bò', tk: 'Trâu bò', sp: 'Tốc độ' };
+  var SRC = { hit: ['👊', '#ff6b6b'], proj: ['🏹', '#ffa94d'], orb: ['🗡️', '#dee2e6'], haz: ['🕳️', '#ff8787'], dot: ['☠️', '#94d82d'], zn: ['🔴', '#ff6b6b'], root: ['⛓️', '#adb5bd'],
+    beam: ['🌀', '#e0aaff'], bolt: ['⚡', '#ffee32'], fire: ['🔥', '#ff9f1c'], bomb: ['💣', '#fb5607'], slash: ['⚔️', '#e63946'], wall: ['🧱', '#8ecae6'], hook: ['🪝', '#ced4da'], boo: ['🎤', '#ffafcc'], harp: ['🪝', '#4dabf7'] };
+  var pct = function (v) { return Math.round((1 - v) * 100); };
   var TX = {
+    ln: function (v) { return 'Giữ Deathnote: viết tên đối thủ trong ' + v[0] + 's đầu. Hết ' + v[0] + 's đối thủ chỉ còn ' + v[1] + ' máu, Light mất Deathnote và đánh mạnh lên x' + v[2]; },
+    nk: function (v) { return 'Chịu tối đa ' + v + ' lần va chạm. Chưa chết sau ' + v + ' lần thì nổ toàn map, đối thủ chết ngay (chết ở lần ' + v + ' vẫn thua)'; },
+    yu: function (v) { return 'Sau ' + v + 's giao tranh hô "Rikka", sao chép sức mạnh đối thủ và mạnh hơn x1.1'; },
+    vt: function () { return 'Dưới 20% máu: to hơn, đánh gấp đôi. Nhưng chết một lần là thua cả trận'; },
+    kn: function (v) { return 'Mỗi ' + v[0] + 's gọi 1 kị sĩ (' + v[1] + ' máu, lao như Burst), tối đa 4 kị sĩ'; },
+    dom: function (v) { return 'Mỗi ' + v[0] + 's mở lãnh địa rộng (~50% sàn), tồn tại ' + v[2] + 's và đi theo bóng. Đối thủ chạm vào bị chém 20 nhát trong 2s (' + v[4] + ' sát thương/nhát) + chảy máu ' + v[5] + '/s'; },
+    fire: function (v) { return 'Mỗi ' + v[0] + 's phun lửa về phía đối thủ (' + v[1] + ' sát thương)'; },
+    boo: function (v) { return 'Mỗi ' + v[0] + 's đánh vần 1 chữ trong HIEUTHUHAI, đủ chữ gây ' + v[1] + ' sát thương'; },
+    bz: function (v) { return 'Máu càng ít sát thương càng lớn (tối đa x' + v + ')'; },
+    pr: function (v) { return 'Mỗi ' + v[0] + 's hồi ' + Math.round(v[1] * 100) + '% lượng máu đã mất'; },
+    cs: function (v) { return 'Mỗi ' + v + 's di chuyển như Xe, Chốt, Mã, Tượng, Hậu hoặc Vua'; },
+    pot: function (v) { return 'Mỗi ' + v[0] + 's ném bom độc tạo vùng ' + v[2] + 's, ' + v[1] + ' sát thương/s'; },
+    bomb: function (v) { return 'Mỗi ' + v[0] + 's đặt 1 bomb, sau ' + v[1] + 's nổ gây ' + v[2] + ' sát thương'; },
+    bm: function (v) { return 'Mỗi ' + v[0] + 's bắn kamehameha to (' + v[1] + ' sát thương), lúc vận luôn dí theo đối thủ'; },
+    lz: function (v) { return 'Mỗi ' + v[0] + 's bắn laser ' + v[1] + ' hướng chia đều (' + v[2] + ' sát thương/tia)'; },
+    hold: function (v) { return 'Cú đấm giữ đối thủ ' + v + 's (đang giữ không gây thêm sát thương)'; },
+    web: function (v) { return 'Dính bẫy: chậm ' + pct(v[1]) + '% trong ' + v[0] + 's, bị va chạm lúc đó nhận x2 sát thương'; },
+    horn: function (v) { return 'Va chạm làm đối thủ mọc sừng ' + v[0] + 's: ' + v[1] + ' sát thương/s và chậm ' + pct(v[2]) + '%'; },
     root: function (v) { return 'Mỗi ' + v[0] + 's trói đối thủ ' + v[1] + 's và gây ' + v[2] + ' sát thương'; },
-    pl: function (v) { return 'Mỗi ' + v + 's kéo đối thủ lại gần'; }, bs: function (v) { return 'Mỗi ' + v + 's lao thẳng tới, cú đấm x1.8'; },
+    pl: function (v) { return 'Mỗi ' + v + 's kéo đối thủ lại gần (Harpoon: bắn dây nảy tường đến khi trúng đối thủ rồi kéo về)'; },
+    bs: function (v) { return 'Mỗi ' + v + 's lao thẳng tới đối thủ'; },
     sh: function (v) { return 'Mỗi ' + v[0] + 's bắn ' + v[2] + ' đạn (' + v[1] + ' sát thương' + (v[3] ? ', tự dẫn' : '') + ')'; },
+    bolt: function (v) { return 'Mỗi ' + v[0] + 's bắn tia điện ' + v[1] + ' sát thương, gây choáng'; },
     orb: function (v) { return v[0] + ' lưỡi xoay quanh (' + v[1] + ' sát thương), thêm 1 lưỡi mỗi 5s'; },
     dr: function (v) { return 'Mỗi ' + v[0] + 's thả vùng ' + v[1] + ' sát thương/s kéo dài ' + v[2] + 's'; },
-    w: function (v) { return 'Chạm tường để lại bẫy ' + v[0] + '/s trong ' + v[1] + 's'; },
-    zn: function (v) { return 'Vòng quanh bóng gây ' + v[0] + ' sát thương/s khi đối thủ lọt vào'; },
-    st: function (v) { return 'Mỗi cú đấm làm choáng ' + v + 's'; }, dot: function (v) { return 'Cú đấm gây độc ' + v[0] + '/s trong ' + v[1] + 's'; },
-    ls: function (v) { return 'Mỗi cú đấm hút ' + v + ' máu'; }, hl: function (v) { return 'Mỗi ' + v[0] + 's hồi ' + v[1] + ' máu'; },
+    w: function (v) { return v[0] ? 'Chạm tường để lại bẫy ' + v[0] + '/s trong ' + v[1] + 's' : 'Chạm tường để lại bẫy giăng ' + v[1] + 's'; },
+    st: function (v) { return 'Mỗi cú đấm làm choáng ' + v + 's'; },
+    dot: function (v) { return v[2] ? 'Cú đấm gây chảy máu ' + v[0] + '/s trong ' + v[1] + 's' : 'Cú đấm gây độc ' + v[0] + '/s trong ' + v[1] + 's'; },
+    ls: function (v) { return 'Mỗi cú đấm hút ' + v + ' máu'; },
+    hl: function (v) { return 'Mỗi ' + v[0] + 's hồi ' + v[1] + ' máu'; },
     gr: function (v) { return 'Mỗi cú đấm tăng thêm ' + Math.round(v * 100) + '% sát thương (tối đa x3)'; },
-    ch: function () { return 'Nghỉ đánh 2.5s thì cú đấm kế tiếp gấp 2.2 lần'; }, lu: function () { return 'Bị đánh có thể ngẫu nhiên tăng sát thương'; },
-    lo: function () { return 'Dưới 40% máu: chạy và bắn nhanh hơn 60%'; }, rn: function (v) { return 'Sát thương cú đấm ngẫu nhiên x' + v[0] + ' đến x' + v[1]; },
-    kb: function (v) { return 'Hất đối thủ văng ra (lực x' + v + ')'; }, x: function (v) { return 'Cú đấm mạnh thêm ' + v + ' sát thương'; },
-    hp: function (v) { return 'Máu x' + v; }, sp: function (v) { return 'Di chuyển nhanh x' + v; }
+    ch: function (v) { return 'Nghỉ đánh càng lâu cú đấm càng mạnh, tối đa x' + v; },
+    lo: function () { return 'Dưới 40% máu: chạy và bắn nhanh hơn 60%'; },
+    rn: function (v) { return 'Sát thương cú đấm ngẫu nhiên x' + v[0] + ' đến x' + v[1]; },
+    kb: function (v) { return 'Hất đối thủ văng ra (lực x' + v + ')'; },
+    x: function (v) { return v > 0 ? 'Cú đấm mạnh thêm ' + v + ' sát thương' : 'Cú đấm yếu đi ' + (-v) + ' sát thương'; },
+    hp: function (v) { return 'Máu x' + v; },
+    tk: function (v) { return 'Sát thương nhận vào chỉ còn x' + v; },
+    dm0: function (v) { return 'Sát thương gốc x' + v; },
+    sp: function (v) { return 'Di chuyển nhanh x' + v; },
+    ps: function (v) { return 'Đạn bay nhanh hơn ' + Math.round((v - 1) * 100) + '%'; },
+    pz: function (v) { return 'Đạn to hơn ' + Math.round((v - 1) * 100) + '%'; },
+    gl: function (v) { return 'Đạn chạm tường vỡ ' + v[0] + ' mảnh (' + v[1] + ' sát thương/mảnh)'; },
+    pdot: function (v) { return 'Đạn gây độc ' + v[0] + '/s trong ' + v[1] + 's'; },
+    sl: function (v) { return 'Vùng làm chậm ' + pct(v) + '% khi đối thủ đứng trong'; },
+    fr: function (v) { return 'Mỗi lần chạm vùng (hoặc bị đấm) tích 1 điểm frost, đủ ' + v[0] + ' điểm thì đứng yên ' + v[1] + 's'; },
+    bl: function (v) { return 'Đủ ' + v[0] + ' lưỡi thì phóng cả ' + v[0] + ' lưỡi tự dẫn về phía địch (' + v[1] + ' sát thương/lưỡi)'; },
+    pu: function () { return 'Vùng hút bóng ở gần vào tâm'; },
+    os: function (v) { return 'Lưỡi rìu to hơn ' + Math.round((v - 1) * 100) + '%'; },
+    bsm: function (v) { return 'Cú lao gây x' + v + ' sát thương'; },
+    wd: function (v) { return 'Dây móc bay khắp sân, nảy tường tới khi trúng bóng địch, rồi kéo địch ngược theo đúng đường dây về phía mình, gây ' + v[0] + ' sát thương mỗi ' + v[1] + '–' + v[2] + 's; kết thúc khi địch chạm tới Harpoon'; },
+    hk: function () { return 'Kéo nhanh và mạnh hơn; sát thương theo khoảng cách (gần tối đa x2.5, xa tối thiểu x1.1)'; }
   };
-  var CDS = [['root', 'rt', function (c) { return c.root[0]; }], ['pl', 'pl', function (c) { return c.pl; }], ['bs', 'bs', function (c) { return c.bs; }], ['sh', 'sh', function (c) { return c.sh[0]; }], ['dr', 'dr', function (c) { return c.dr[0]; }], ['hl', 'hl', function (c) { return c.hl[0]; }]];
-  function descr(c) { var o = []; ORDER.forEach(function (k) { if (c[k] !== undefined) o.push([ICON[k], TX[k](c[k])]); }); return o; }
-  function ballIcon(b) { for (var i = 0; i < ORDER.length; i++) if (b[2][ORDER[i]] !== undefined) return ICON[ORDER[i]]; return '⚪'; }
-  function ballTags(b) { var t = []; ORDER.forEach(function (k) { if (b[2][k] !== undefined && t.indexOf(TAG[k]) < 0) t.push(TAG[k]); }); return t; }
+  var CDS = [['dom', 'dom', function (c) { return c.dom[0]; }], ['lz', 'lz', function (c) { return c.lz[0]; }], ['bm', 'bm', function (c) { return c.bm[0]; }], ['bomb', 'bomb', function (c) { return c.bomb[0]; }],
+    ['fire', 'fire', function (c) { return c.fire[0]; }], ['pot', 'pot', function (c) { return c.pot[0]; }], ['kn', 'kn', function (c) { return c.kn[0]; }], ['pr', 'pr', function (c) { return c.pr[0]; }],
+    ['cs', 'cs', function (c) { return c.cs; }], ['boo', 'boo', function (c) { return c.boo[0]; }], ['bolt', 'bolt', function (c) { return c.bolt[0]; }],
+    ['root', 'rt', function (c) { return c.root[0]; }], ['pl', 'pl', function (c) { return c.pl; }], ['bs', 'bs', function (c) { return c.bs; }], ['sh', 'sh', function (c) { return c.sh[0]; }],
+    ['dr', 'dr', function (c) { return c.dr[0]; }], ['hl', 'hl', function (c) { return c.hl[0]; }]];
+  function descr(c) { var o = []; ORDER.forEach(function (k) { if (c[k] !== undefined && TX[k]) o.push([ICON[k], TX[k](c[k])]); }); return o; }
+  function ballIcon(b) { if (b[2].ic) return b[2].ic; for (var i = 0; i < ORDER.length; i++) if (b[2][ORDER[i]] !== undefined) return ICON[ORDER[i]]; return '⚪'; }
+  function icoHTML(b) { return b[4] ? '<img src="' + b[4] + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.replaceWith(document.createTextNode(\'' + ballIcon(b) + '\'))">' : ballIcon(b); }
+  function ballTags(b) { var t = []; ORDER.forEach(function (k) { if (b[2][k] !== undefined && TAG[k] && t.indexOf(TAG[k]) < 0) t.push(TAG[k]); }); return t; }
   function chips(b) { return descr(b[2]).map(function (d) { return '<span>' + d[0] + ' ' + d[1] + '</span>'; }).join(''); }
-
   function bvbPool() { return students.filter(function (s) { return bvbDone.indexOf(s.id) < 0; }); }
   function openBvb() {
     var p = bvbPool();
     if (p.length < 2) { bvbDone = []; p = students.slice(); if (p.length >= 2) toast('Bắt đầu vòng mới'); }
     if (p.length < 2) { toast('Cần ít nhất 2 bạn để đấu'); return; }
-    $('bvb').hidden = false; document.documentElement.style.overflow = 'hidden'; ac();
+    $('bvb').hidden = false; document.documentElement.style.overflow = 'hidden'; ac(); bgm(1);
     bvbStart(p);
   }
   function closeBvb() {
     var id = BVB && BVB.shown ? BVB.lid : null;
     if (BVB) cancelAnimationFrame(BVB.raf);
-    BVB = null; $('bvb').hidden = true; $('bvh').hidden = true; $('bvd').hidden = true; document.documentElement.style.overflow = '';
+    bgm(0); BVB = null; $('bvb').hidden = true; $('bvh').hidden = true; $('bvd').hidden = true; document.documentElement.style.overflow = '';
     if (id) flash(id);
   }
-  function bvbStart(pool) {
+  function bvbStart(pool, cu) {
     if (BVB) cancelAnimationFrame(BVB.raf);
     $('bvr').hidden = true; $('bvh').hidden = true; $('bvd').hidden = true;
-    var B = BVB = { P: [null, null], pool: pool, spm: {}, sp: [], round: 0, phase: 'pick', t: 0, T: 0, fast: false, last: 0, raf: 0, shown: false, loser: -1, haz: [], pr: [], fx: [] };
-    $('bvs').textContent = 'Đang bốc thăm 2 bạn…';
+    var B = BVB = { P: [null, null], pool: pool, spm: {}, sp: [], round: 0, phase: 'pick', t: 0, T: 0, fast: false, last: 0, raf: 0, shown: false, loser: -1, haz: [], pr: [], fx: [], cu: cu || null };
+    $('bvs').textContent = 'Đang bốc thăm 2 bạn…'; $('bvpause').textContent = '⏸';
     Promise.all(pool.map(function (s) {
       return new Promise(function (res) {
         if (!s.avatar) return res(null);
@@ -1093,7 +1264,9 @@ button, input { font: inherit; color: inherit; }
     })).then(function (imgs) {
       if (BVB !== B) return;
       pool.forEach(function (s, i) { B.spm[s.id] = sprite(s, imgs[i], 96); });
-      bvbLayout(); B.last = performance.now(); B.raf = requestAnimationFrame(bvbFrame);
+      bvbLayout();
+      if (cu) { [0, 1].forEach(function (k) { B.P[k] = { s: byId(cu.s[k]), hearts: HEARTS, ball: null, drafts: [] }; B.sp[k] = B.spm[cu.s[k]]; }); bvbRound(); }
+      B.last = performance.now(); B.raf = requestAnimationFrame(bvbFrame);
     });
   }
   function bvbLayout() {
@@ -1109,29 +1282,29 @@ button, input { font: inherit; color: inherit; }
   var PICK_AT = [1.9, 3.6];
   function lockPick(s) {
     var B = BVB, ex = B.P[0] ? B.P[0].s.id : null, c = B.pool.filter(function (x) { return x.id !== ex; }), p = c[Math.floor(rnd() * c.length)];
-    B.P[s] = { s: p, hearts: 3, ball: null, drafts: [] }; B.sp[s] = B.spm[p.id];
+    B.P[s] = { s: p, hearts: HEARTS, ball: null, drafts: [] }; B.sp[s] = B.spm[p.id];
     sfx('lock'); $('bvs').textContent = s ? p.name + ' vào trận!' : 'Người chơi 1: ' + p.name;
   }
   function bvbRound() {
-    var B = BVB; B.round++; B.phase = 'draft'; B.t = 0; B.T = 0; B.cd = 0; B.haz = []; B.pr = []; B.fx = []; B.dres = 0; B.sec = -1;
+    var B = BVB; B.round++; B.phase = 'draft'; B.t = 0; B.T = 0; B.cd = 0; B.haz = []; B.pr = []; B.fx = []; B.bm = []; B.bb = []; B.mn = []; B.dres = 0; B.sec = -1;
     B.P.forEach(function (p, i) {
       p.drafts = shuffled(BALLS).slice(0, 3); p.ball = p.drafts[Math.floor(rnd() * 3)];
-      var c = p.ball[2], a = (i ? Math.PI : 0) + rr(-0.7, 0.7), mx = 60 * (c.hp || 1);
-      p.b = { x: i ? 450 : 150, y: 300 + rr(-80, 80), vx: Math.cos(a) * 250, vy: Math.sin(a) * 250, hp: mx, mx: mx, dm: 1, st: 0, stCd: 0, rt: 0, dot: 0, dps: 0, bsT: 0, last: 0, ocd: 0, wcd: 0, ang: 0, tm: {}, acc: {}, flash: 0 };
+      if (B.cu) { p.ball = BALLS[B.cu.b[i]]; p.drafts = [p.ball]; }
+      mkUnit(p, i);
     });
     $('bvh').hidden = true; bvbLayout();
     var d = $('bvd');
-    d.innerHTML = '<div class="dwrap"><h2>VÒNG ' + B.round + '</h2><p>Mỗi bạn bốc ngẫu nhiên 3 bóng, rồi máy chọn 1 bóng để vào trận</p><div class="dcols">' +
+    d.innerHTML = '<div class="dwrap"><h2>VÒNG ' + B.round + '</h2><p>' + (B.cu ? 'Trận tự chọn: sức mạnh do các bạn chọn' : 'Mỗi bạn bốc ngẫu nhiên 3 bóng, rồi máy chọn 1 bóng để vào trận') + '</p><div class="dcols">' +
       B.P.map(function (p, pi) {
         return '<div class="dcol t' + pi + '"><div class="dwho"><img src="' + B.sp[pi].toDataURL() + '" alt=""><b>' + esc(p.s.name) + '</b></div><div class="dcards">' +
-          p.drafts.map(function (b, i) { return '<div class="dc" data-p="' + pi + '" data-i="' + i + '"><i style="background:' + b[1] + '">' + ballIcon(b) + '</i><b>' + b[0] + '</b><small>' + ballTags(b).join(' · ') + '</small></div>'; }).join('') +
+          p.drafts.map(function (b, i) { return '<div class="dc" data-p="' + pi + '" data-i="' + i + '"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><u class="tr ' + b[3] + '">' + b[3] + '</u><b>' + b[0] + '</b><small>' + ballTags(b).join(' · ') + '</small></div>'; }).join('') +
           '</div><div class="dd">Đang bốc…</div></div>';
       }).join('') + '</div></div>';
     d.hidden = false; $('bvs').textContent = 'Vòng ' + B.round + ' · bốc bóng';
   }
   function draftUpdate() {
     var B = BVB, cs = $('bvd').querySelectorAll('.dc');
-    if (B.t < 2.4) {
+    if (!B.cu && B.t < 2.4) {
       var hi = Math.floor(B.t * 9) % 3; if (hi !== B.dh) { B.dh = hi; sfx('tick'); }
       cs.forEach(function (el) { el.classList.toggle('hot', +el.dataset.i === Math.floor(B.t * 9 + +el.dataset.p * 2) % 3); });
     } else if (!B.dres) {
@@ -1139,13 +1312,13 @@ button, input { font: inherit; color: inherit; }
       cs.forEach(function (el) { var p = B.P[+el.dataset.p], on = p.drafts[+el.dataset.i] === p.ball; el.classList.remove('hot'); el.classList.add(on ? 'win' : 'lose'); });
       $('bvd').querySelectorAll('.dd').forEach(function (el, i) { el.innerHTML = '<b>' + ballIcon(B.P[i].ball) + ' ' + B.P[i].ball[0] + ' Ball</b><div class="chips">' + chips(B.P[i].ball) + '</div>'; });
     }
-    if (B.t > 6.2) { sfx('go'); B.phase = 'fight'; B.t = 0; $('bvd').hidden = true; fillHud(); bvbLayout(); $('bvs').textContent = 'Vòng ' + B.round + ' · đang đấu'; }
+    if (B.t > (B.cu ? 3.5 : 6.2)) { sfx('go'); B.phase = 'fight'; B.t = 0; $('bvd').hidden = true; fillHud(); bvbLayout(); $('bvs').textContent = 'Vòng ' + B.round + ' · đang đấu'; }
   }
   function fillHud() {
     var B = BVB, h = $('bvh');
     h.innerHTML = B.P.map(function (p, i) {
       return '<div class="pc t' + i + '"><div class="pc-top"><img src="' + B.sp[i].toDataURL() + '" alt=""><b>' + esc(p.s.name) + '</b><span class="hr"></span></div>' +
-        '<div class="pc-ball"><i style="background:' + p.ball[1] + '">' + ballIcon(p.ball) + '</i>' + p.ball[0] + ' Ball</div>' +
+        '<div class="pc-ball"><i style="background:' + p.ball[1] + '">' + icoHTML(p.ball) + '</i>' + p.ball[0] + ' Ball <u class="tr ' + p.ball[3] + '">' + p.ball[3] + '</u></div>' +
         '<div class="hb"><div class="g"></div><div class="f"></div><em></em></div><div class="chips">' + chips(p.ball) + '</div></div>';
     }).join('');
     h.hidden = false;
@@ -1157,92 +1330,284 @@ button, input { font: inherit; color: inherit; }
       var e = B.hel[i], pc = Math.max(0, p.b.hp / p.b.mx * 100) + '%';
       e.f.style.width = pc; e.g.style.width = pc; e.f.style.background = p.b.hp / p.b.mx > 0.4 ? '#2a9d8f' : '#e5383b';
       e.em.textContent = Math.max(0, Math.ceil(p.b.hp)) + '/' + Math.round(p.b.mx);
-      e.hr.textContent = '♥'.repeat(p.hearts) + '♡'.repeat(3 - p.hearts);
+      e.hr.textContent = '♥'.repeat(p.hearts) + '♡'.repeat(HEARTS - p.hearts);
     });
   }
-  function tick(u, k, s, dt) { u.tm[k] = (u.tm[k] || 0) + dt; if (u.tm[k] >= s) { u.tm[k] = 0; return true; } return false; }
-  function addHaz(i, x, y, r, d, l, col) {
-    var B = BVB; sfx('drop'); B.haz.push({ i: i, x: x, y: y, r: r, d: d, l: l, c: col, ic: B.P[i].ball[2].w ? '🧱' : '🕳️' });
-    if (B.haz.length > 40) B.haz.shift();
+  function tick(u, k, s, dt) { u.tm[k] = (u.tm[k] || 0) + dt * (u.cdf || 1); if (u.tm[k] >= s) { u.tm[k] = 0; return true; } return false; }
+  function addHaz(i, x, y, r, d, l, col, ex) {
+    var B = BVB, h = { i: i, x: x, y: y, r: r, d: d, l: l, l0: l, c: col, ic: '🕳️' }, k;
+    sfx('drop'); if (ex) for (k in ex) h[k] = ex[k];
+    B.haz.push(h); if (B.haz.length > 60) B.haz.shift();
+  }
+  function addBeam(i, ex) {
+    var B = BVB, m = { i: i, t: 0.5, life: 0.35, a: 0, x: 0, y: 0, w: 16, d: 3, len: 1400, k: 'laser', c: B.P[i].ball[1], src: 'beam', done: 0 }, k;
+    for (k in ex) m[k] = ex[k]; B.bm.push(m); return m;
+  }
+  function slow(o, m, dur) { var T = BVB.T; if (T >= o.slT) o.slM = 1; o.slM = Math.min(o.slM, m); o.slT = Math.max(o.slT, T + dur); }
+  function stun(o, dur, txt) {
+    var B = BVB; if (B.T <= o.stCd) return false;
+    o.st = B.T + dur; o.stCd = B.T + dur + 2; sfx('stun'); B.fx.push({ t: 0, x: o.x, y: o.y, v: txt || '⚡ Choáng', c: '#f4c430' }); return true;
+  }
+  function addFrost(o, fr) {
+    o.fp++; BVB.fx.push({ t: 0, x: o.x, y: o.y, v: '❄️ ' + Math.min(o.fp, fr[0]) + '/' + fr[0], c: '#bde0fe' });
+    if (o.fp >= fr[0]) { if (stun(o, fr[1], '🧊 Đóng băng')) o.fp = 0; else o.fp = fr[0]; }
+  }
+  function dotOn(o, dps, dur, kind) {
+    if (o.dot <= 0) { o.dps = dps; sfx('poison'); } else o.dps = Math.max(o.dps, dps);
+    o.dot = Math.max(o.dot, dur); o.dk = kind || 'p';
+  }
+  /* hệ số sát thương gây ra của bóng i (Berserk, Verity, các buff cộng dồn) */
+  function dmOf(i) {
+    var B = BVB, u = B.P[i].b, c = B.P[i].cf, m = u.dm;
+    if (c.vt && u.hp < u.mx * 0.2) m *= 2;
+    if (c.bz) m *= 1 + (c.bz - 1) * (1 - Math.max(0, u.hp) / u.mx);
+    return m;
+  }
+  function aimAt(u, o) { return Math.atan2(o.y - u.y, o.x - u.x); }
+  /* nảy tường: lệch góc ngẫu nhiên nhẹ nên đường bay không lặp lại */
+  function bounce(u, lo, hi) {
+    var R = u.r, hx = u.x < lo + R || u.x > hi - R, hy = u.y < lo + R || u.y > hi - R;
+    if (hx) { u.vx = -u.vx; u.x = Math.max(lo + R, Math.min(hi - R, u.x)); }
+    if (hy) { u.vy = -u.vy; u.y = Math.max(lo + R, Math.min(hi - R, u.y)); }
+    if (hx || hy) { var a = rr(-0.2, 0.2), cs = Math.cos(a), sn = Math.sin(a), nx = u.vx * cs - u.vy * sn; u.vy = u.vx * sn + u.vy * cs; u.vx = nx; }
+    return hx || hy;
   }
   function contact(i, j) {
-    var B = BVB, u = B.P[i].b, o = B.P[j].b, c = B.P[i].ball[2];
-    var dmg = (12 + (c.x || 0)) * u.dm * (c.rn ? rr(c.rn[0], c.rn[1]) : 1) * (u.bsT > B.T ? 1.8 : 1);
-    if (c.ch && B.T - u.last > 2.5) dmg *= 2.2;
-    u.last = B.T; hurt(j, dmg, 'hit');
+    var B = BVB, T = B.T, u = B.P[i].b, o = B.P[j].b, c = B.P[i].cf;
+    if (c.hold && T < o.st) return;
+    var dmg = (12 + (c.x || 0)) * dmOf(i) * (c.rn ? rr(c.rn[0], c.rn[1]) : 1) * (u.bsT > T ? (c.bsm || 1.8) : 1);
+    if (c.ch) dmg *= 1 + (c.ch - 1) * Math.min(1, (T - u.last) / 6);
+    u.last = T; hurt(j, dmg, 'hit');
     if (c.gr) u.dm = Math.min(3, u.dm + c.gr);
     if (c.ls) { u.hp = Math.min(u.mx, u.hp + c.ls); sfx('heal'); B.fx.push({ t: 0, x: u.x, y: u.y, v: '🩸+' + c.ls, c: '#2a9d8f' }); }
-    if (c.dot) { if (o.dot <= 0) sfx('poison'); B.fx.push({ t: 0, x: o.x, y: o.y, v: '☠️ Nhiễm độc', c: '#80b918' }); o.dot = c.dot[1]; o.dps = c.dot[0]; }
-    if (c.st && B.T > o.stCd) { o.st = B.T + c.st; o.stCd = B.T + c.st + 2; sfx('stun'); B.fx.push({ t: 0, x: o.x, y: o.y, v: '⚡ Choáng', c: '#f4c430' }); }
+    if (c.dot) { dotOn(o, c.dot[0], c.dot[1], c.dot[2] ? 'b' : 'p'); B.fx.push({ t: 0, x: o.x, y: o.y, v: c.dot[2] ? '🩸 Chảy máu' : '☠️ Nhiễm độc', c: c.dot[2] ? '#e5383b' : '#80b918' }); }
+    if (c.horn) { o.horn = T + c.horn[0]; dotOn(o, c.horn[1], c.horn[0], 'p'); slow(o, c.horn[2], c.horn[0]); B.fx.push({ t: 0, x: o.x, y: o.y, v: '🦌 Mọc sừng', c: '#80b918' }); }
+    if (c.fr) addFrost(o, c.fr);
+    if (c.hold) stun(o, c.hold, '🔒 Bị giữ');
+    if (c.st) stun(o, c.st);
     if (c.kb) { var dx = o.x - u.x, dy = o.y - u.y, d = Math.hypot(dx, dy) || 1; o.vx += dx / d * 160 * c.kb; o.vy += dy / d * 160 * c.kb; }
   }
-  var SHRINK_AT = 15;
   function bvbInset(T) { return T > SHRINK_AT ? Math.min(200, (T - SHRINK_AT) * 12) : 0; }
+  function mkUnit(p, i) {
+    var c = p.cf = p.ball[2], a = (i ? Math.PI : 0) + rr(-0.7, 0.7), mx = 100 * (c.hp || 1);
+    p.cp = '';
+    p.b = { x: i ? 450 : 150, y: 300 + rr(-80, 80), vx: Math.cos(a) * 250, vy: Math.sin(a) * 250, r: BR, hp: mx, mx: mx, dm: c.dm0 || 1, st: 0, stCd: 0, rt: 0, dot: 0, dps: 0, dk: 'p', bsT: 0, last: 0, ocd: 0, wcd: 0, wcd2: 0,
+      ang: 0, tm: {}, acc: {}, flash: 0, slT: 0, slM: 1, web: 0, horn: 0, fp: 0, fzt: 0, cdf: 1, hits: 0, bT: 0, bi: 0, lnd: 0, yud: 0 };
+  }
+  var KN = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]].map(function (v) { return Math.atan2(v[1], v[0]); });
+  function angd(a, b) { return Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))); }
+  var DIR4 = [0, 1.5708, 3.1416, -1.5708], DIRD = [0.7854, 2.3562, -0.7854, -2.3562], DIR8 = DIR4.concat(DIRD);
+  var CHESS = ['♜', '♟', '♞', '♝', '♛', '♚'], BOO = 'HIEUTHUHAI';
   function bvbStep(dt) {
-    var B = BVB, T = (B.T += dt), P = B.P, R = BR, i, k, lo = bvbInset(T), hi = 600 - lo, sc = Math.floor(T);
-    if (sc !== B.sec) { B.sec = sc; if (sc >= SHRINK_AT - 3 && sc < SHRINK_AT) sfx('beep'); else if (sc === SHRINK_AT) sfx('alarm'); }
+    var B = BVB, T = (B.T += dt), P = B.P, i, k, lo = bvbInset(T), hi = 600 - lo, sc = Math.floor(T);
+    if (sc !== B.sec) {
+      B.sec = sc; $('bvs').textContent = 'Vòng ' + B.round + ' · ' + sc + 's';
+      if (sc >= SHRINK_AT - 3 && sc < SHRINK_AT) sfx('beep'); else if (sc === SHRINK_AT) sfx('alarm');
+    }
     for (i = 0; i < 2; i++) {
-      var p = P[i], u = p.b, c = p.ball[2], j = 1 - i, o = P[j].b, f = c.lo && u.hp < u.mx * 0.4 ? 1.6 : 1, dx, dy, d;
+      var p = P[i], u = p.b, c = p.cf, j = 1 - i, o = P[j].b, oc = P[j].cf, R, f, dx, dy, d, hit;
+      u.r = BR * (c.vt && u.hp < u.mx * 0.2 ? 1.35 : 1); R = u.r;
+      if (c.ln && !u.lnd && T >= c.ln[0]) {
+        u.lnd = 1; if (o.hp > c.ln[1]) o.hp = c.ln[1]; u.dm = c.ln[2]; o.flash = 0.5; sfx('alarm');
+        B.fx.push({ t: 0, x: o.x, y: o.y, v: '📓 Tên đã được viết!', c: '#ff6b6b', big: 1 });
+      }
+      if (c.yu && !u.yud && T >= c.yu) {
+        u.yud = 1; u.dm = 1.1; u.cdf = 1.1; var nc = {}, kk; for (kk in oc) nc[kk] = oc[kk];
+        ['hp', 'dm0', 'nk', 'ln', 'vt', 'yu', 'tk'].forEach(function (z) { delete nc[z]; });
+        p.cf = c = nc; p.cp = P[j].ball[0]; u.tm = {}; sfx('win');
+        B.fx.push({ t: 0, x: 300, y: 300, v: '🧿 RIKKA!', c: '#8ecae6', big: 1, huge: 1 }); B.fx.push({ t: 0, x: u.x, y: u.y, v: 'Sao chép ' + P[j].ball[0], c: '#8ecae6', big: 1 });
+      }
+      f = c.lo && u.hp < u.mx * 0.4 ? 1.6 : 1;
       if (u.dot > 0) { u.dot -= dt; hurt(i, u.dps * dt, 'dot', 1); } if (tick(u, 'acc', 0.5, dt)) flushAcc(i);
-      if (c.zn && Math.hypot(o.x - u.x, o.y - u.y) < c.zn[1] + R) hurt(j, c.zn[0] * dt, 'zn', 1);
       if (T >= u.st && T >= u.rt) {
-        var s = Math.hypot(u.vx, u.vy) || 1, sp = 250 * (c.sp || 1) * f, m = 1 + (sp / s - 1) * Math.min(1, dt * 2.5);
+        var s = Math.hypot(u.vx, u.vy) || 1, sp = 250 * (c.sp || 1) * f * (T < u.slT ? u.slM : 1), m = 1 + (sp / s - 1) * Math.min(1, dt * 2.5);
         u.vx *= m; u.vy *= m; u.x += u.vx * dt; u.y += u.vy * dt;
-        var hx = u.x < lo + R || u.x > hi - R, hy = u.y < lo + R || u.y > hi - R;
-        if (hx) { u.vx = -u.vx; u.x = Math.max(lo + R, Math.min(hi - R, u.x)); }
-        if (hy) { u.vy = -u.vy; u.y = Math.max(lo + R, Math.min(hi - R, u.y)); }
-        if ((hx || hy) && c.w && T > u.wcd) { u.wcd = T + 0.3; addHaz(i, u.x, u.y, c.w[2], c.w[0], c.w[1], p.ball[1]); }
+        hit = bounce(u, lo, hi);
+        if (hit && c.w && T > u.wcd) { u.wcd = T + 0.9; addHaz(i, u.x, u.y, c.w[2], c.w[0], c.w[1], p.ball[1], { web: c.web, ic: '🕸️' }); }
       }
       u.x = Math.max(lo + R, Math.min(hi - R, u.x)); u.y = Math.max(lo + R, Math.min(hi - R, u.y));
-      if (c.dr && tick(u, 'dr', c.dr[0] / f, dt)) addHaz(i, u.x, u.y, c.dr[3], c.dr[1] * (c.rn ? rr(c.rn[0], c.rn[1]) : 1), c.dr[2], p.ball[1]);
+      if (c.dr && tick(u, 'dr', c.dr[0] / f, dt)) addHaz(i, u.x, u.y, c.dr[3], c.dr[1], c.dr[2], p.ball[1], { sl: c.sl, fr: c.fr, pu: c.pu, ic: c.ic || (c.pu ? '🌀' : c.fr ? '❄️' : c.sl ? '🧊' : '🕳️') });
       if (c.sh && tick(u, 'sh', c.sh[0] / f, dt)) {
-        var n = c.sh[2], base = Math.atan2(o.y - u.y, o.x - u.x);
-        sfx('shoot'); for (k = 0; k < n; k++) { var an = base + (k - (n - 1) / 2) * 0.28; B.pr.push({ i: i, x: u.x, y: u.y, vx: Math.cos(an) * 380, vy: Math.sin(an) * 380, d: c.sh[1], h: c.sh[3], l: 4 }); }
+        var n = c.sh[2], base = aimAt(u, o), sp2 = 380 * (c.ps || 1);
+        sfx('shoot'); for (k = 0; k < n; k++) { var an = base + (k - (n - 1) / 2) * 0.28; B.pr.push({ i: i, x: u.x, y: u.y, vx: Math.cos(an) * sp2, vy: Math.sin(an) * sp2, d: c.sh[1], h: c.sh[3], l: 4, s: 8 * (c.pz || 1), gl: c.gl, pd: c.pdot }); }
+      }
+      if (c.pot && tick(u, 'pot', c.pot[0], dt)) {
+        var pa = aimAt(u, o); sfx('shoot');
+        B.pr.push({ i: i, x: u.x, y: u.y, vx: Math.cos(pa) * 560, vy: Math.sin(pa) * 560, lob: 1, tx: o.x, ty: o.y, l: 2, d: c.pot[1], pl: c.pot[2], pr: c.pot[3], s: 10 });
       }
       if (c.orb) {
         u.ang += 3.2 * dt; u.ocd -= dt;
-        var nb = c.orb[0] + Math.floor(T / 5);
+        var nb = Math.min(c.bl ? c.bl[0] : 99, c.orb[0] + Math.floor((T - u.bT) / 5)), os = c.os || 1;
         for (k = 0; k < nb; k++) {
           var ba = u.ang + k * 6.2832 / nb;
-          if (u.ocd <= 0 && Math.hypot(o.x - (u.x + Math.cos(ba) * (R + 16)), o.y - (u.y + Math.sin(ba) * (R + 16))) < R + 7) { hurt(j, c.orb[1] * u.dm, 'orb'); u.ocd = 0.35; }
+          if (u.ocd <= 0 && Math.hypot(o.x - (u.x + Math.cos(ba) * (R + 16)), o.y - (u.y + Math.sin(ba) * (R + 16))) < o.r + 7 * os) { hurt(j, c.orb[1] * dmOf(i), 'orb'); u.ocd = 0.35; }
+        }
+        if (c.bl && nb >= c.bl[0]) {
+          u.bT = T; sfx('dash'); B.fx.push({ t: 0, x: u.x, y: u.y, v: '🗡️ Bão kiếm!', c: '#dee2e6', big: 1 });
+          for (k = 0; k < c.bl[0]; k++) { var qa = aimAt(u, o) + (k - (c.bl[0] - 1) / 2) * 0.35; B.pr.push({ i: i, x: u.x, y: u.y, vx: Math.cos(qa) * 460, vy: Math.sin(qa) * 460, h: 1, sp: 460, d: c.bl[1], s: 9, l: 3.5, blade: 1 }); }
         }
       }
       if (c.root && tick(u, 'rt', c.root[0], dt)) { o.rt = T + c.root[1]; hurt(j, c.root[2], 'root'); B.fx.push({ t: 0, x: o.x, y: o.y, v: '⛓', c: p.ball[1] }); }
       if (c.hl && tick(u, 'hl', c.hl[0], dt)) { u.hp = Math.min(u.mx, u.hp + c.hl[1]); sfx('heal'); B.fx.push({ t: 0, x: u.x, y: u.y, v: '💚+' + c.hl[1], c: '#2a9d8f' }); }
-      if (c.pl && tick(u, 'pl', c.pl, dt)) { dx = u.x - o.x; dy = u.y - o.y; d = Math.hypot(dx, dy) || 1; o.vx = dx / d * 520; o.vy = dy / d * 520; sfx('pull'); B.fx.push({ t: 0, a: i }); }
+      if (c.pr && tick(u, 'pr', c.pr[0], dt) && u.hp < u.mx) { var hh = (u.mx - u.hp) * c.pr[1]; u.hp += hh; sfx('heal'); B.fx.push({ t: 0, x: u.x, y: u.y, v: '✝️+' + Math.round(hh), c: '#2a9d8f' }); }
+      if (c.pl && !(c.wd && B.pr.some(function (r) { return r.rope && r.i === i; })) && tick(u, 'pl', c.pl, dt)) {
+        dx = u.x - o.x; dy = u.y - o.y; d = Math.hypot(dx, dy) || 1;
+        if (c.wd) {
+          var ha = aimAt(u, o); sfx('harpoon'); B.pr.push({ i: i, x: u.x, y: u.y, vx: Math.cos(ha) * 720, vy: Math.sin(ha) * 720, rope: 1, l: 7, s: 9, path: [], W: [], tn: 0 });
+        } else {
+          var pw = c.hk ? 800 : 520; o.vx = dx / d * pw; o.vy = dy / d * pw; sfx('pull'); B.fx.push({ t: 0, a: i });
+          if (c.hk) hurt(j, 12 * dmOf(i) * (1.1 + 1.4 * (1 - Math.min(1, d / 520))), 'hook');
+        }
+      }
       if (c.bs && tick(u, 'bs', c.bs, dt)) { dx = o.x - u.x; dy = o.y - u.y; d = Math.hypot(dx, dy) || 1; u.vx = dx / d * 700; u.vy = dy / d * 700; u.bsT = T + 0.8; sfx('dash'); }
+      if (c.lz && tick(u, 'lz', c.lz[0], dt)) { var a0 = rr(0, 6.2832); sfx('beep'); for (k = 0; k < c.lz[1]; k++) addBeam(i, { k: 'laser', a: a0 + k * 6.2832 / c.lz[1], t: 0.6, w: 16, d: c.lz[2] }); }
+      if (c.bm && tick(u, 'bm', c.bm[0], dt)) { sfx('beep'); addBeam(i, { k: 'beam', aim: 1, a: aimAt(u, o), t: 0.7, w: c.bm[2], d: c.bm[1], life: 0.45 }); }
+      if (c.bolt && tick(u, 'bolt', c.bolt[0], dt)) addBeam(i, { k: 'bolt', aim: 1, t: 0.15, w: 22, d: c.bolt[1], stun: c.bolt[2], life: 0.3, src: 'bolt' });
+      if (c.fire && tick(u, 'fire', c.fire[0], dt)) { sfx('beep'); addBeam(i, { k: 'fire', a: aimAt(u, o), t: 0.35, w: 96, len: 200, d: c.fire[1], life: 0.5, src: 'fire', c: '#ff7f11' }); }
+      if (c.bomb && tick(u, 'bomb', c.bomb[0], dt)) { sfx('drop'); B.bb.push({ i: i, x: u.x, y: u.y, t: c.bomb[1], t0: c.bomb[1], r: c.bomb[3], d: c.bomb[2] }); }
+      if (c.dom && tick(u, 'dom', c.dom[0], dt)) {
+        var rd = c.dom[1];
+        addHaz(i, u.x, u.y, rd, 0, c.dom[2], p.ball[1], { sw: [c.dom[3], c.dom[4]], bld: [c.dom[5], c.dom[6]], ic: '⚔️', follow: i }); sfx('alarm');
+        B.fx.push({ t: 0, x: u.x, y: u.y, v: '⚔️ Domain Expansion!', c: '#ff9f1c', big: 1 });
+      }
+      if (c.cs && tick(u, 'cs', c.cs, dt)) {
+        var pi = Math.floor(rnd() * 6), ca, sq = 720, q4 = Math.floor(rnd() * 4), q8 = Math.floor(rnd() * 8);
+        var am = aimAt(u, o), cand = pi === 0 ? DIR4 : pi === 1 ? [am] : pi === 2 ? KN : pi === 3 ? DIRD : DIR8; sq = pi === 1 || pi === 5 ? 430 : pi === 2 ? 640 : 720;
+        ca = cand.reduce(function (bst, v) { return angd(v, am) < angd(bst, am) ? v : bst; }, cand[0]);
+        u.vx = Math.cos(ca) * sq; u.vy = Math.sin(ca) * sq; sfx('dash'); B.fx.push({ t: 0, x: u.x, y: u.y, v: CHESS[pi], c: '#e9ecef', big: 1 });
+      }
+      if (c.kn && tick(u, 'kn', c.kn[0], dt) && B.mn.filter(function (z) { return z.i === i; }).length < 4) {
+        sfx('lock'); B.mn.push({ i: i, x: u.x, y: u.y, vx: rr(-250, 250), vy: rr(-250, 250), hp: c.kn[1], mx: c.kn[1], r: 24, tm: rr(0, 1.5), bsT: 0, cd: 0, fl: 0 });
+        B.fx.push({ t: 0, x: u.x, y: u.y, v: '🏇 Kị sĩ!', c: p.ball[1] });
+      }
+      if (c.boo && tick(u, 'boo', c.boo[0], dt)) { u.bi++; sfx('tick'); if (u.bi >= BOO.length) { u.bi = 0; sfx('win'); hurt(j, c.boo[1] * dmOf(i), 'boo'); } }
     }
-    var a = P[0].b, b = P[1].b, ex = b.x - a.x, ey = b.y - a.y, e = Math.hypot(ex, ey) || 1;
-    if (e < 2 * R) {
-      var nx = ex / e, ny = ey / e, ov = (2 * R - e) / 2;
+    var a = P[0].b, b = P[1].b, ex = b.x - a.x, ey = b.y - a.y, e = Math.hypot(ex, ey) || 1, rs = a.r + b.r;
+    if (e < rs) {
+      var nx = ex / e, ny = ey / e, ov = (rs - e) / 2;
       a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
       var rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
       if (rv < 0) { a.vx += rv * nx; a.vy += rv * ny; b.vx -= rv * nx; b.vy -= rv * ny; }
-      if (T > B.cd) { B.cd = T + 0.45; contact(0, 1); contact(1, 0); }
+      if (T > B.cd) {
+        B.cd = T + 0.45; contact(0, 1); contact(1, 0);
+        for (k = 0; k < 2; k++) {
+          var nu = P[k].b, nf = P[k].cf;
+          if (nf.nk) {
+            nu.hits++; B.fx.push({ t: 0, x: nu.x, y: nu.y, v: '☢️ ' + Math.min(nu.hits, nf.nk) + '/' + nf.nk, c: '#c6ff00' });
+            if (nu.hits >= nf.nk && nu.hp > 0 && P[1 - k].b.hp > 0) { P[1 - k].b.hp = 0; sfx('ko'); B.fx.push({ t: 0, x: 300, y: 300, v: '☢️ NUKE!', c: '#c6ff00', big: 1 }); }
+          }
+        }
+      }
     }
+    B.mn = B.mn.filter(function (m) {
+      var oi = 1 - m.i, o = P[oi].b, dx, dy, d, s, mm;
+      m.tm += dt; m.cd -= dt; m.fl = Math.max(0, m.fl - dt);
+      if (m.tm >= 3.2) { m.tm = 0; dx = o.x - m.x; dy = o.y - m.y; d = Math.hypot(dx, dy) || 1; m.vx = dx / d * 700; m.vy = dy / d * 700; m.bsT = T + 0.8; }
+      s = Math.hypot(m.vx, m.vy) || 1; mm = 1 + (250 / s - 1) * Math.min(1, dt * 2.5); m.vx *= mm; m.vy *= mm; m.x += m.vx * dt; m.y += m.vy * dt;
+      if (m.x < lo + m.r || m.x > hi - m.r) { m.vx = -m.vx; m.x = Math.max(lo + m.r, Math.min(hi - m.r, m.x)); }
+      if (m.y < lo + m.r || m.y > hi - m.r) { m.vy = -m.vy; m.y = Math.max(lo + m.r, Math.min(hi - m.r, m.y)); }
+      dx = o.x - m.x; dy = o.y - m.y; d = Math.hypot(dx, dy) || 1;
+      if (d < m.r + o.r) {
+        var nx = dx / d, ny = dy / d, ov = m.r + o.r - d, rv = m.vx * nx + m.vy * ny;
+        m.x -= nx * ov * 0.7; m.y -= ny * ov * 0.7; o.x += nx * ov * 0.3; o.y += ny * ov * 0.3;
+        if (rv > 0) { m.vx -= 2 * rv * nx; m.vy -= 2 * rv * ny; }
+        if (m.cd <= 0) {
+          m.cd = 0.6; hurt(oi, 12 * dmOf(m.i) * (T < m.bsT ? 2 : 1), 'hit'); var kd = 12 * dmOf(oi); m.hp -= kd; m.fl = 0.18;
+          B.fx.push({ t: 0, x: m.x, y: m.y, v: '🏇 -' + Math.round(kd), c: '#ffa94d' });
+        }
+      }
+      if (m.hp <= 0) { for (var z = 0; z < 8; z++) { var qa = rr(0, 6.2832), qs = rr(60, 220); B.fx.push({ t: 0, x: m.x, y: m.y, vx: Math.cos(qa) * qs, vy: Math.sin(qa) * qs, c: P[m.i].ball[1] }); } return false; }
+      return true;
+    });
+    var born = [];
     B.pr = B.pr.filter(function (q) {
-      var o = P[1 - q.i].b;
-      if (q.h) { var gx = o.x - q.x, gy = o.y - q.y, g = Math.hypot(gx, gy) || 1; q.vx += (gx / g * 330 - q.vx) * 3 * dt; q.vy += (gy / g * 330 - q.vy) * 3 * dt; }
+      var od = 1 - q.i, o = P[od].b, nx, ny, an;
+      if (q.h) { var gx = o.x - q.x, gy = o.y - q.y, g = Math.hypot(gx, gy) || 1, tv = q.sp || 330; q.vx += (gx / g * tv - q.vx) * 3 * dt; q.vy += (gy / g * tv - q.vy) * 3 * dt; }
       q.x += q.vx * dt; q.y += q.vy * dt; q.l -= dt;
-      if (Math.hypot(o.x - q.x, o.y - q.y) < R + 5) { hurt(1 - q.i, q.d * P[q.i].b.dm, 'proj'); return false; }
+      if (q.lob) {
+        if (Math.hypot(q.tx - q.x, q.ty - q.y) < 16 || q.l <= 0) { addHaz(q.i, q.tx, q.ty, q.pr, q.d, q.pl, P[q.i].ball[1], { ic: '🧪' }); return false; }
+        return true;
+      }
+      if (q.rope) {
+        var ou = P[q.i].b, rw = P[q.i].cf.wd;
+        if (q.drag) {
+          q.x = o.x; q.y = o.y; q.l = 9;
+          var tg = q.W.length ? q.W[0] : ou, tx = Math.max(lo + o.r, Math.min(hi - o.r, tg.x)), ty = Math.max(lo + o.r, Math.min(hi - o.r, tg.y)), wd2 = Math.hypot(tx - o.x, ty - o.y) || 1;
+          if (q.W.length && wd2 < 16) q.W.shift();
+          o.vx = (tx - o.x) / wd2 * 600; o.vy = (ty - o.y) / wd2 * 600;
+          q.tn -= dt; if (q.tn <= 0) { q.tn = rr(rw[1], rw[2]); hurt(od, rw[0] * dmOf(q.i), 'harp', 1); sfx('harp'); }
+          if (Math.hypot(ou.x - o.x, ou.y - o.y) < o.r + ou.r + 4) { sfx('pull'); return false; }
+          return true;
+        }
+        var hx = q.x < lo + 3 || q.x > hi - 3, hy = q.y < lo + 3 || q.y > hi - 3;
+        if (hx) { q.vx = -q.vx; q.x = Math.max(lo + 4, Math.min(hi - 4, q.x)); } if (hy) { q.vy = -q.vy; q.y = Math.max(lo + 4, Math.min(hi - 4, q.y)); }
+        if (hx || hy) { q.path.push({ x: q.x, y: q.y }); sfx('wall'); }
+        if (Math.hypot(o.x - q.x, o.y - q.y) < o.r + q.s) { q.drag = 1; q.tn = 0; q.W = q.path.slice().reverse(); sfx('hook'); B.fx.push({ t: 0, x: o.x, y: o.y, v: '🪝 Bị kéo!', c: '#4dabf7' }); return true; }
+        return q.l > 0;
+      }
+      if (q.storm) { if (Math.hypot(o.x - q.x, o.y - q.y) < o.r + q.s) hurt(od, q.dps * dmOf(q.i) * dt, 'orb', 1); return q.l > 0; }
+      if (Math.hypot(o.x - q.x, o.y - q.y) < o.r + q.s - 3) {
+        hurt(od, q.d * dmOf(q.i), 'proj'); if (q.pd) { dotOn(o, q.pd[0], q.pd[1], 'p'); B.fx.push({ t: 0, x: o.x, y: o.y, v: '☠️ Nhiễm độc', c: '#80b918' }); } return false;
+      }
+      if (q.gl && (q.x < lo + 2 || q.x > hi - 2 || q.y < lo + 2 || q.y > hi - 2)) {
+        /* vỡ tại tường: các mảnh văng ngược vào trong sân (xoè quanh pháp tuyến hướng vào trong) */
+        var nl = q.x < lo + 2 ? 0 : q.x > hi - 2 ? 3.1416 : q.y < lo + 2 ? 1.5708 : -1.5708, sx = Math.max(lo + 8, Math.min(hi - 8, q.x)), sy = Math.max(lo + 8, Math.min(hi - 8, q.y));
+        for (var z = 0; z < q.gl[0]; z++) { an = nl + (z - (q.gl[0] - 1) / 2) * 0.6; born.push({ i: q.i, x: sx, y: sy, vx: Math.cos(an) * 360, vy: Math.sin(an) * 360, d: q.gl[1], l: 2, s: 8, shard: 1 }); }
+        sfx('proj'); return false;
+      }
       return q.l > 0 && q.x > lo - 20 && q.x < hi + 20 && q.y > lo - 20 && q.y < hi + 20;
+    }).concat(born);
+    B.bm = B.bm.filter(function (m) {
+      var oi = 1 - m.i, o = P[oi].b, u = P[m.i].b;
+      if (!m.done) {
+        m.x = u.x; m.y = u.y; m.t -= dt;
+        if (m.aim) m.a = aimAt(u, o);
+        if (m.t <= 0) {
+          m.done = 1; var dx = o.x - m.x, dy = o.y - m.y, al = dx * Math.cos(m.a) + dy * Math.sin(m.a), pe = Math.abs(-dx * Math.sin(m.a) + dy * Math.cos(m.a));
+          sfx(m.k === 'bolt' ? 'stun' : 'shoot');
+          if (al > 0 && al < m.len && pe < m.w / 2 + o.r) { hurt(oi, m.d * dmOf(m.i), m.src); if (m.stun) stun(o, m.stun); }
+        }
+        return true;
+      }
+      m.life -= dt; return m.life > 0;
+    });
+    B.bb = B.bb.filter(function (z) {
+      z.t -= dt; if (z.t > 0) return true;
+      var o = P[1 - z.i].b; sfx('ko');
+      for (var q = 0; q < 14; q++) { var qa = rr(0, 6.2832), qs = rr(80, 260); B.fx.push({ t: 0, x: z.x, y: z.y, vx: Math.cos(qa) * qs, vy: Math.sin(qa) * qs, c: '#fb5607' }); }
+      if (Math.hypot(o.x - z.x, o.y - z.y) < z.r + o.r) hurt(1 - z.i, z.d * dmOf(z.i), 'bomb');
+      return false;
     });
     B.haz = B.haz.filter(function (h) {
-      var o = P[1 - h.i].b;
-      if (Math.hypot(o.x - h.x, o.y - h.y) < h.r + R) hurt(1 - h.i, h.d * dt, 'haz', 1);
+      if (h.follow !== undefined) { h.x = P[h.follow].b.x; h.y = P[h.follow].b.y; }
+      var oi = 1 - h.i, o = P[oi].b, d = Math.hypot(o.x - h.x, o.y - h.y), inn = d < h.r + o.r;
+      if (h.pu && d < h.r * 1.7 && d > 4) { o.vx += (h.x - o.x) / d * h.pu * dt; o.vy += (h.y - o.y) / d * h.pu * dt; }
+      if (h.sw) {
+        if (inn && !h.on) { h.on = 1; if (!h.left) { h.left = 20; h.sc = 0; B.fx.push({ t: 0, x: o.x, y: o.y, v: '⚔️ 20 nhát chém!', c: '#e63946', big: 1 }); } }
+        if (h.left > 0) { h.sc += dt; while (h.sc >= h.sw[0] && h.left > 0) { h.sc -= h.sw[0]; h.left--; hurt(oi, h.sw[1] * dmOf(h.i), 'slash', 1); dotOn(o, h.bld[0], h.bld[1], 'b'); } }
+      }
+      if (inn) {
+        if (h.d) hurt(oi, h.d * dt, 'haz', 1);
+        if (h.sl) slow(o, h.sl, 0.3);
+        if (h.fr && !h.on) { h.on = 1; addFrost(o, h.fr); }
+        if (h.web) { slow(o, h.web[1], h.web[0]); o.web = T + h.web[0]; sfx('root'); B.fx.push({ t: 0, x: o.x, y: o.y, v: '🕸️ Dính bẫy', c: '#d9d9e3' }); h.l = 0; }
+      }
+      if (!inn) h.on = 0;
       h.l -= dt; return h.l > 0;
     });
     if (a.hp <= 0 || b.hp <= 0) {
       var L = a.hp <= 0 && b.hp <= 0 ? (a.hp === b.hp ? (rnd() < 0.5 ? 0 : 1) : (a.hp < b.hp ? 0 : 1)) : (a.hp <= 0 ? 0 : 1), lu = P[L].b;
-      sfx('ko'); B.loser = L; flushAcc(0); flushAcc(1); P[L].hearts--; B.phase = 'ko'; B.t = 0;
-      for (k = 0; k < 22; k++) { var pa = rr(0, 6.2832), ps = rr(80, 320); B.fx.push({ t: 0, x: lu.x, y: lu.y, vx: Math.cos(pa) * ps, vy: Math.sin(pa) * ps, c: P[L].ball[1] }); }
+      sfx('ko'); B.loser = L; flushAcc(0); flushAcc(1);
+      if (P[L].cf.vt) P[L].hearts = 1;  /* Verity chết một lần là thua cả trận */
+      P[L].hearts--; B.phase = 'ko'; B.t = 0;
+      for (k = 0; k < 22; k++) { var pa2 = rr(0, 6.2832), ps = rr(80, 320); B.fx.push({ t: 0, x: lu.x, y: lu.y, vx: Math.cos(pa2) * ps, vy: Math.sin(pa2) * ps, c: P[L].ball[1] }); }
       $('bvs').textContent = P[L].s.name + ' mất 1 tim' + (P[L].hearts ? '' : ' · hết tim!');
     }
   }
 
   function flushAcc(i) {
     var u = BVB.P[i].b, k;
-    for (k in u.acc) if (u.acc[k] >= 0.5) { dmgFx(u, k, u.acc[k]); } 
+    for (k in u.acc) if (u.acc[k] >= 0.5) { dmgFx(u, k, u.acc[k]); }
     u.acc = {};
   }
   function dmgFx(u, src, n) {
@@ -1250,19 +1615,20 @@ button, input { font: inherit; color: inherit; }
     sfx(src); BVB.fx.push({ t: 0, x: u.x + rr(-14, 14), y: u.y, v: s[0] + ' -' + Math.round(n), c: s[1], big: src === 'hit' });
   }
   function hurt(i, n, src, cont) {
-    var B = BVB, u = B.P[i].b, c = B.P[i].ball[2];
+    var B = BVB, u = B.P[i].b, c = B.P[i].cf;
     if (B.phase !== 'fight') return;
+    if (src === 'hit' && B.T < u.web) n *= 2;  /* Spider: đang dính bẫy bị va chạm thì x2 */
+    n *= (c.tk || 1);
     u.hp -= n; u.flash = 0.18;
     if (cont) u.acc[src] = (u.acc[src] || 0) + n; else dmgFx(u, src, n);
-    if (c.lu && rnd() < c.lu * n / 30) u.dm += 0.25;
   }
-  function bvbFrame(now) {
+    function bvbFrame(now) {
     var B = BVB; if (!B) return;
     var dt = Math.max(0, Math.min(0.05, (now - B.last) / 1000)), k, m = B.fast ? 3 : 1;
-    B.last = now; B.t += dt * (B.phase === 'fight' ? 1 : m);
+    B.last = now; if (B.pause) dt = 0; B.t += dt * (B.phase === 'fight' ? 1 : m);
     B.fx = B.fx.filter(function (f) {
       f.t += dt; if (f.vx !== undefined) { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; }
-      return f.t < (f.a !== undefined ? 0.5 : f.v ? 1.6 : 1.3);
+      return f.t < ((f.a !== undefined || f.ln) ? 0.4 : f.v ? 1.6 : 1.3);
     });
     B.P.forEach(function (p) { if (p && p.b) p.b.flash = Math.max(0, p.b.flash - dt); });
     if (B.phase === 'pick') {
@@ -1297,13 +1663,14 @@ button, input { font: inherit; color: inherit; }
     c.fillStyle = '#fff'; c.font = '700 ' + 36 * big + 'px ' + B.ff; c.fillText('VS', W / 2, tall ? H / 2 + 5 : H / 2);
   }
   function bvbDraw() {
-    var B = BVB, c = $('bvc').getContext('2d'), W = B.W, H = B.H, C = B.col, P = B.P, R = BR, ph = B.phase, k;
+    var B = BVB, c = $('bvc').getContext('2d'), W = B.W, H = B.H, C = B.col, P = B.P, ph = B.phase, k;
     c.setTransform(B.d, 0, 0, B.d, 0, 0);
     var g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, C.sky1); g.addColorStop(1, C.sky2); c.fillStyle = g; c.fillRect(0, 0, W, H);
     c.textBaseline = 'middle';
     if (ph === 'pick') { drawPick(c); return; }
     c.save(); c.translate(B.x0, B.y0); c.scale(B.k, B.k);
-    c.globalAlpha = 0.92; c.fillStyle = C.surf; c.fillRect(0, 0, 600, 600); c.globalAlpha = 1;
+    c.globalAlpha = 0.92; c.fillStyle = C.surf; c.fillRect(0, 0, 600, 600); c.globalAlpha = 0.07; c.strokeStyle = C.ink; c.lineWidth = 1; c.beginPath();
+    for (k = 50; k < 600; k += 50) { c.moveTo(k, 0); c.lineTo(k, 600); c.moveTo(0, k); c.lineTo(600, k); } c.stroke(); c.globalAlpha = 1;
     c.strokeStyle = C.ink; c.lineWidth = 6; c.strokeRect(0, 0, 600, 600);
     var ins = bvbInset(B.T);
     if (ph !== 'draft' && ins > 0) {
@@ -1315,15 +1682,63 @@ button, input { font: inherit; color: inherit; }
       B.haz.forEach(function (h) {
         c.globalAlpha = Math.min(0.45, h.l * 0.4 + 0.12); c.fillStyle = h.c; c.beginPath(); c.arc(h.x, h.y, h.r, 0, 6.2832); c.fill();
         c.globalAlpha = 0.9; c.strokeStyle = h.c; c.lineWidth = 2.5; c.setLineDash([6, 5]); c.beginPath(); c.arc(h.x, h.y, h.r * pulse, 0, 6.2832); c.stroke(); c.setLineDash([]);
-        c.font = Math.max(14, h.r * 0.7) + 'px ' + B.ff; c.textAlign = 'center'; c.fillText(h.ic, h.x, h.y); c.globalAlpha = 1;
+        if (h.pu) { c.globalAlpha = 0.35; c.beginPath(); c.arc(h.x, h.y, h.r * 1.7, 0, 6.2832); c.stroke(); }
+        c.globalAlpha = 0.9; c.font = Math.max(14, Math.min(48, h.r * 0.7)) + 'px ' + B.ff; c.textAlign = 'center'; c.fillText(h.ic, h.x, h.y); c.globalAlpha = 1;
+      });
+      B.bb.forEach(function (z) {
+        var fl = Math.sin(B.T * (z.t < 1.2 ? 22 : 8)) > 0;
+        c.globalAlpha = 0.18 + (fl ? 0.12 : 0); c.fillStyle = '#fb5607'; c.beginPath(); c.arc(z.x, z.y, z.r, 0, 6.2832); c.fill();
+        c.globalAlpha = 0.8; c.strokeStyle = '#fb5607'; c.lineWidth = 2; c.setLineDash([5, 5]); c.beginPath(); c.arc(z.x, z.y, z.r * (1 - z.t / z.t0 * 0.3), 0, 6.2832); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+        c.font = '24px ' + B.ff; c.textAlign = 'center'; c.fillText('💣', z.x, z.y - 2);
+        c.font = '800 13px ' + B.ff; c.lineWidth = 3; c.strokeStyle = 'rgba(0,0,0,.6)'; c.strokeText(z.t.toFixed(1), z.x, z.y + 20); c.fillStyle = '#ffd43b'; c.fillText(z.t.toFixed(1), z.x, z.y + 20);
+      });
+      B.bm.forEach(function (m) {
+        var ex = m.x + Math.cos(m.a) * m.len, ey = m.y + Math.sin(m.a) * m.len; c.lineCap = 'round';
+        if (!m.done) {
+          c.globalAlpha = 0.35 + 0.25 * Math.sin(B.T * 30); c.strokeStyle = m.c; c.lineWidth = m.k === 'fire' ? m.w * 0.6 : 2; c.setLineDash([10, 8]);
+          c.beginPath(); c.moveTo(m.x, m.y); c.lineTo(m.k === 'fire' ? m.x + Math.cos(m.a) * m.len : ex, m.k === 'fire' ? m.y + Math.sin(m.a) * m.len : ey); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+          if (m.k === 'beam') { c.fillStyle = m.c; c.globalAlpha = 0.6; c.beginPath(); c.arc(m.x, m.y, 14 + 10 * (1 - m.t / 0.7), 0, 6.2832); c.fill(); c.globalAlpha = 1; }
+        } else {
+          var al = Math.max(0, m.life / 0.45); c.globalAlpha = Math.min(1, al * 1.4);
+          if (m.k === 'bolt') {
+            c.strokeStyle = '#fff'; c.lineWidth = 4; c.beginPath(); c.moveTo(m.x, m.y);
+            var tx = m.x + Math.cos(m.a) * 700, ty = m.y + Math.sin(m.a) * 700;
+            for (k = 1; k < 9; k++) c.lineTo(m.x + (tx - m.x) * k / 9 + rr(-14, 14), m.y + (ty - m.y) * k / 9 + rr(-14, 14));
+            c.stroke();
+          } else {
+            var ll = m.k === 'fire' ? m.len : m.len; c.strokeStyle = m.c; c.lineWidth = m.w; c.globalAlpha = al * 0.55; c.beginPath(); c.moveTo(m.x, m.y); c.lineTo(m.x + Math.cos(m.a) * ll, m.y + Math.sin(m.a) * ll); c.stroke();
+            c.strokeStyle = '#fff'; c.lineWidth = m.w * 0.35; c.globalAlpha = al; c.stroke();
+          }
+          c.globalAlpha = 1;
+        }
       });
       B.pr.forEach(function (q) {
-        var col = P[q.i].ball[1]; c.strokeStyle = col; c.lineWidth = 5; c.lineCap = 'round'; c.globalAlpha = 0.5; c.beginPath(); c.moveTo(q.x, q.y); c.lineTo(q.x - q.vx * 0.05, q.y - q.vy * 0.05); c.stroke(); c.globalAlpha = 1;
-        c.fillStyle = col; c.beginPath(); c.arc(q.x, q.y, 8, 0, 6.2832); c.fill(); c.strokeStyle = C.ink; c.lineWidth = 2; c.stroke();
+        var col = P[q.i].ball[1];
+        if (q.rope) {
+          var ob = P[q.i].b, ro = P[1 - q.i].b, pts = [ob].concat(q.drag ? q.W.slice().reverse() : q.path), lp = q.drag ? ro : q, zi;
+          pts.push(lp); c.save(); c.lineJoin = 'round'; c.strokeStyle = col; c.lineWidth = 3; c.setLineDash(q.drag ? [10, 5] : []); c.shadowColor = col; c.shadowBlur = 8;
+          c.beginPath(); c.moveTo(pts[0].x, pts[0].y); for (zi = 1; zi < pts.length; zi++) c.lineTo(pts[zi].x, pts[zi].y); c.stroke(); c.restore();
+          c.font = '22px ' + B.ff; c.textAlign = 'center'; c.fillText('🪝', lp.x, lp.y); return;
+        }
+        if (q.blade) { c.save(); c.translate(q.x, q.y); c.rotate(Math.atan2(q.vy, q.vx) + 2.356); c.font = '22px ' + B.ff; c.textAlign = 'center'; c.fillText('🗡️', 0, 0); c.restore(); return; }
+        if (q.storm) {
+          c.globalAlpha = 0.25; c.fillStyle = col; c.beginPath(); c.arc(q.x, q.y, q.s, 0, 6.2832); c.fill(); c.globalAlpha = 1; c.font = '18px ' + B.ff; c.textAlign = 'center';
+          for (k = 0; k < 6; k++) { var sa = B.T * 9 + k * 1.0472; c.fillText('🗡️', q.x + Math.cos(sa) * q.s * 0.7, q.y + Math.sin(sa) * q.s * 0.7); } return;
+        }
+        if (q.lob) { c.font = '22px ' + B.ff; c.textAlign = 'center'; c.fillText('🧪', q.x, q.y); c.globalAlpha = 0.35; c.strokeStyle = col; c.lineWidth = 2; c.beginPath(); c.arc(q.tx, q.ty, q.pr, 0, 6.2832); c.stroke(); c.globalAlpha = 1; return; }
+        c.strokeStyle = col; c.lineWidth = q.s * 0.65; c.lineCap = 'round'; c.globalAlpha = 0.5; c.beginPath(); c.moveTo(q.x, q.y); c.lineTo(q.x - q.vx * 0.05, q.y - q.vy * 0.05); c.stroke(); c.globalAlpha = 1;
+        c.fillStyle = q.shard ? '#e0fbfc' : col; c.beginPath(); c.arc(q.x, q.y, q.s, 0, 6.2832); c.fill(); c.strokeStyle = C.ink; c.lineWidth = 2; c.stroke();
+      });
+      B.mn.forEach(function (m) {
+        var col = P[m.i].ball[1];
+        c.fillStyle = col; c.globalAlpha = 0.35; c.beginPath(); c.arc(m.x, m.y, m.r + 3, 0, 6.2832); c.fill(); c.globalAlpha = 1;
+        c.strokeStyle = m.fl > 0 ? '#e5383b' : col; c.lineWidth = 4; c.beginPath(); c.arc(m.x, m.y, m.r, 0, 6.2832); c.stroke();
+        c.font = '26px ' + B.ff; c.textAlign = 'center'; c.fillText('🏇', m.x, m.y);
+        c.fillStyle = 'rgba(0,0,0,.4)'; c.fillRect(m.x - 16, m.y + m.r + 4, 32, 5); c.fillStyle = '#2a9d8f'; c.fillRect(m.x - 16, m.y + m.r + 4, 32 * m.hp / m.mx, 5);
       });
       P.forEach(function (p, i) {
-        var u = p.b, cf = p.ball[2]; if (ph === 'ko' && B.loser === i) return;
-        if (cf.zn) { c.fillStyle = p.ball[1]; c.globalAlpha = 0.12; c.beginPath(); c.arc(u.x, u.y, cf.zn[1] + R, 0, 6.2832); c.fill(); c.strokeStyle = p.ball[1]; c.globalAlpha = 0.7; c.lineWidth = 2; c.setLineDash([8, 6]); c.stroke(); c.setLineDash([]); c.globalAlpha = 1; }
+        var u = p.b, cf = p.cf, R = u.r, nm = p.ball[0]; if (ph === 'ko' && B.loser === i) return;
+        if (cf.zn) { c.fillStyle = p.ball[1]; c.globalAlpha = 0.12; c.beginPath(); c.arc(u.x, u.y, cf.zn[1] + R, 0, 6.2832); c.fill(); c.globalAlpha = 1; }
         c.drawImage(B.sp[i], u.x - R, u.y - R, 2 * R, 2 * R);
         c.strokeStyle = p.ball[1]; c.lineWidth = 5; c.beginPath(); c.arc(u.x, u.y, R + 2, 0, 6.2832); c.stroke();
         c.strokeStyle = i ? '#ef476f' : '#3a86ff'; c.lineWidth = 2; c.beginPath(); c.arc(u.x, u.y, R + 6, 0, 6.2832); c.stroke();
@@ -1333,20 +1748,25 @@ button, input { font: inherit; color: inherit; }
           c.beginPath(); c.arc(u.x, u.y, R + 12, -1.5708, -1.5708 + pr * 6.2832); c.stroke(); c.globalAlpha = 1; break;
         }
         if (cf.orb) {
-          var nb = cf.orb[0] + Math.floor(B.T / 5); c.font = '20px ' + B.ff; c.textAlign = 'center';
+          var nb = Math.min(cf.bl ? cf.bl[0] : 99, cf.orb[0] + Math.floor((B.T - u.bT) / 5)); c.font = 20 * (cf.os || 1) + 'px ' + B.ff; c.textAlign = 'center';
           for (k = 0; k < nb; k++) { var ba = u.ang + k * 6.2832 / nb; c.save(); c.translate(u.x + Math.cos(ba) * (R + 16), u.y + Math.sin(ba) * (R + 16)); c.rotate(ba + 1.57); c.fillText('🗡️', 0, 0); c.restore(); }
         }
-        var tg = ''; if (B.T < u.st) tg += '⚡'; if (B.T < u.rt) tg += '⛓️'; if (u.dot > 0) tg += '☠️'; if (u.dm > 1.05) tg += '📈x' + u.dm.toFixed(1);
+        var tg = ''; if (B.T < u.st) tg += '⚡'; if (B.T < u.rt) tg += '⛓️'; if (u.dot > 0) tg += u.dk === 'b' ? '🩸' : '☠️'; if (B.T < u.web) tg += '🕸️'; if (B.T < u.horn) tg += '🦌';
+        if (B.T < u.slT && u.slM < 1) tg += '🐌'; if (u.fp > 0) tg += '❄️' + u.fp; if (u.dm > 1.05 && cf.gr) tg += '📈x' + u.dm.toFixed(1); if (cf.bz && u.hp < u.mx * 0.7) tg += '😤x' + dmOf(i).toFixed(1);
+        if (cf.nk) tg += '☢️' + Math.min(u.hits, cf.nk) + '/' + cf.nk; if (cf.ln && !u.lnd) tg += '📓' + Math.max(0, Math.ceil(cf.ln[0] - B.T)) + 's';
+        if (p.ball[2].yu && !u.yud) tg += '🧿' + Math.max(0, Math.ceil(p.ball[2].yu - B.T)) + 's'; if (cf.boo) tg += BOO.slice(0, u.bi); if (cf.vt && u.hp < u.mx * 0.2) tg += '🔱';
         if (B.T < u.st || B.T < u.rt) { c.fillStyle = 'rgba(120,200,255,.4)'; c.beginPath(); c.arc(u.x, u.y, R + 4, 0, 6.2832); c.fill(); }
-        if (u.dot > 0) { c.strokeStyle = '#80b918'; c.lineWidth = 3; c.setLineDash([5, 5]); c.beginPath(); c.arc(u.x, u.y, R + 10, 0, 6.2832); c.stroke(); c.setLineDash([]); }
-        c.textAlign = 'center'; c.font = '600 13px ' + B.ff; c.fillStyle = C.ink; c.fillText(ballIcon(p.ball) + ' ' + p.ball[0], u.x, u.y + R + 24);
+        if (u.dot > 0) { c.strokeStyle = u.dk === 'b' ? '#e5383b' : '#80b918'; c.lineWidth = 3; c.setLineDash([5, 5]); c.beginPath(); c.arc(u.x, u.y, R + 10, 0, 6.2832); c.stroke(); c.setLineDash([]); }
+        if (p.cp) nm = '🧿 ' + nm + ' → ' + p.cp;
+        c.textAlign = 'center'; c.font = '600 13px ' + B.ff; c.fillStyle = C.ink; c.fillText((p.cp ? '' : ballIcon(p.ball) + ' ') + nm, u.x, u.y + R + 24);
         if (tg) { c.font = '700 15px ' + B.ff; c.fillText(tg, u.x, u.y - R - 22); }
       });
     }
     B.fx.forEach(function (f) {
       if (f.a !== undefined) { var s = P[f.a].b, t = P[1 - f.a].b; c.strokeStyle = C.ink; c.lineWidth = 3; c.beginPath(); c.moveTo(s.x, s.y); c.lineTo(t.x, t.y); c.stroke(); return; }
+      if (f.ln) { c.strokeStyle = C.ink; c.lineWidth = 3; c.beginPath(); c.moveTo(f.ln[0], f.ln[1]); c.lineTo(f.ln[2], f.ln[3]); c.stroke(); return; }
       c.globalAlpha = Math.max(0, 1 - f.t / 1.6);
-      if (f.v) { c.textAlign = 'center'; c.font = '800 ' + (f.big ? 24 : 18) + 'px ' + B.ff; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.65)'; c.strokeText(f.v, f.x, f.y - 36 - f.t * 42); c.fillStyle = f.c || '#e5383b'; c.fillText(f.v, f.x, f.y - 36 - f.t * 42); }
+      if (f.v) { c.textAlign = 'center'; c.font = '800 ' + (f.huge ? 54 : f.big ? 24 : 18) + 'px ' + B.ff; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.65)'; c.strokeText(f.v, f.x, f.y - 36 - f.t * 42); c.fillStyle = f.c || '#e5383b'; c.fillText(f.v, f.x, f.y - 36 - f.t * 42); }
       else { c.fillStyle = f.c; c.beginPath(); c.arc(f.x, f.y, 5, 0, 6.2832); c.fill(); }
       c.globalAlpha = 1;
     });
@@ -1355,24 +1775,27 @@ button, input { font: inherit; color: inherit; }
       c.textAlign = 'center'; c.font = '800 22px ' + B.ff; c.lineWidth = 4; c.strokeStyle = 'rgba(0,0,0,.6)'; c.strokeText(msg, 300, ins + 26); c.fillStyle = '#ffd43b'; c.fillText(msg, 300, ins + 26);
     }
     if (ph === 'ko') { c.fillStyle = 'rgba(0,0,0,.5)'; c.fillRect(0, 0, 600, 600); c.fillStyle = '#fff'; c.textAlign = 'center'; c.font = '800 64px ' + B.ff; c.fillText('K.O.', 300, 300); }
+    if (B.pause) { c.fillStyle = 'rgba(0,0,0,.55)'; c.fillRect(0, 0, 600, 600); c.fillStyle = '#fff'; c.textAlign = 'center'; c.font = '800 44px ' + B.ff; c.fillText('⏸ TẠM DỪNG', 300, 290); c.font = '500 16px ' + B.ff; c.fillText('Nhấn Space hoặc nút ▶ để chơi tiếp', 300, 336); }
     c.restore();
   }
   function bvbEnd() {
     var B = BVB, L = B.P[0].hearts <= 0 ? 0 : 1, l = B.P[L].s, w = B.P[1 - L].s, left;
-    sfx('win'); B.phase = 'end'; B.shown = true; B.lid = l.id; bvbDone.push(l.id); left = bvbPool().length;
-    var list = bvbDone.map(function (id, i) { var p = byId(id); return p ? '<span>' + (i + 1) + '. ' + esc(p.name) + '</span>' : ''; }).join('');
+    sfx('win'); B.phase = 'end'; B.shown = true; B.lid = l.id; if (!B.cu) bvbDone.push(l.id); left = bvbPool().length;
+    var list = B.cu ? '' : bvbDone.map(function (id, i) { var p = byId(id); return p ? '<span>' + (i + 1) + '. ' + esc(p.name) + '</span>' : ''; }).join('');
     $('bvs').textContent = '';
     $('bvr').innerHTML =
       '<p class="eyebrow">Thua trận · lên bảng!</p>' + avatar(l) + '<h3>' + esc(l.name) + '</h3>' +
-      '<p class="sub">Người thắng: ' + esc(w.name) + ' (còn ' + B.P[1 - L].hearts + '/3 tim)</p><div class="picked">' + list + '</div>' +
-      '<div class="acts">' + (left >= 2 ? '<button class="btn primary" type="button" data-v="next">Đấu tiếp (còn ' + left + ' bạn)</button>' : '') +
-      '<button class="btn" type="button" data-v="again">Làm lại từ đầu</button><button class="btn" type="button" data-v="close">Đóng</button></div>';
+      '<p class="sub">Người thắng: ' + esc(w.name) + ' (còn ' + B.P[1 - L].hearts + '/' + HEARTS + ' tim)</p><div class="picked">' + list + '</div>' +
+      '<div class="acts">' + (B.cu ? '<button class="btn primary" type="button" data-v="recustom">Đấu lại</button><button class="btn" type="button" data-v="setcustom">Đổi lựa chọn</button>' : '') + (!B.cu && left >= 2 ? '<button class="btn primary" type="button" data-v="next">Đấu tiếp (còn ' + left + ' bạn)</button>' : '') +
+      (B.cu ? '' : '<button class="btn" type="button" data-v="again">Làm lại từ đầu</button>') + '<button class="btn" type="button" data-v="close">Đóng</button></div>';
     $('bvr').hidden = false;
   }
   $('bvr').addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-v]'); if (!b || !BVB) return;
     var act = b.getAttribute('data-v');
     if (act === 'close') { closeBvb(); return; }
+    if (act === 'recustom') { bvbStart(students.slice(), CUS); return; }
+    if (act === 'setcustom') { closeBvb(); openCm(); return; }
     if (act === 'again') bvbDone = [];
     bvbStart(bvbPool());
   });
@@ -1387,23 +1810,28 @@ button, input { font: inherit; color: inherit; }
   $('bvmute').addEventListener('click', function () {
     SFX_ON = !SFX_ON; this.textContent = SFX_ON ? '🔊' : '🔇';
     try { localStorage.setItem('bvb-sfx', SFX_ON ? '1' : '0'); } catch (e) {}
-    if (SFX_ON) { ac(); sfx('lock'); }
+    bgm(SFX_ON && BVB ? 1 : 0); if (SFX_ON) { ac(); sfx('lock'); }
   });
 
-  /* ---------- Bảng sức mạnh: xem trước năng lực từng loại ball ---------- */
-  var PV = { tag: 'Tất cả', sel: 0 };
+  /* ---------- Bảng sức mạnh: xem trước năng lực và tier (D → S) của từng loại ball ---------- */
+  var PV = { tag: 'Tất cả', sel: 0 }, TIERS = ['S', 'A', 'B', 'C', 'D'];
   function bar(l, v, mx, col) { return '<div class="sb"><span>' + l + '</span><div><i style="width:' + Math.min(100, v / mx * 100) + '%;background:' + col + '"></i></div><em>' + (Math.round(v * 10) / 10) + '</em></div>'; }
   function renderPv() {
-    var q = $('pvq').value.trim().toLowerCase(), tags = ['Tất cả'];
+    var q = $('pvq').value.trim().toLowerCase(), tags = ['Tất cả'].concat(TIERS.map(function (t) { return 'Tier ' + t; }));
     BALLS.forEach(function (b) { ballTags(b).forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
     $('pvc').innerHTML = tags.map(function (t) { return '<button type="button" class="btn' + (t === PV.tag ? ' primary' : '') + '" data-t="' + t + '">' + t + '</button>'; }).join('');
-    var list = BALLS.map(function (b, i) { return [b, i]; }).filter(function (x) { return (PV.tag === 'Tất cả' || ballTags(x[0]).indexOf(PV.tag) >= 0) && (!q || x[0][0].toLowerCase().indexOf(q) >= 0); });
-    $('pvg').innerHTML = list.map(function (x) { var b = x[0]; return '<button type="button" class="pcard' + (x[1] === PV.sel ? ' on' : '') + '" data-i="' + x[1] + '"><i style="background:' + b[1] + '">' + ballIcon(b) + '</i><b>' + b[0] + '</b><small>' + ballTags(b).join(' · ') + '</small></button>'; }).join('') || '<p class="muted">Không có ball phù hợp.</p>';
+    $('pv').querySelector('.pv-head h2').textContent = 'Bảng sức mạnh · ' + BALLS.length + ' loại ball';
+    var list = BALLS.map(function (b, i) { return [b, i]; }).filter(function (x) {
+      return (PV.tag === 'Tất cả' || PV.tag === 'Tier ' + x[0][3] || ballTags(x[0]).indexOf(PV.tag) >= 0) && (!q || x[0][0].toLowerCase().indexOf(q) >= 0);
+    }).sort(function (a, b) { return TIERS.indexOf(a[0][3]) - TIERS.indexOf(b[0][3]) || a[1] - b[1]; });
+    $('pvg').innerHTML = list.map(function (x) {
+      var b = x[0]; return '<button type="button" class="pcard' + (x[1] === PV.sel ? ' on' : '') + '" data-i="' + x[1] + '"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><u class="tr ' + b[3] + '">' + b[3] + '</u><b>' + b[0] + '</b><small>' + ballTags(b).join(' · ') + '</small></button>';
+    }).join('') || '<p class="muted">Không có ball phù hợp.</p>';
     var b = BALLS[PV.sel], c = b[2];
-    $('pvd').innerHTML = '<div class="dh"><i style="background:' + b[1] + '">' + ballIcon(b) + '</i><div><h3>' + b[0] + ' Ball</h3><small>' + ballTags(b).join(' · ') + '</small></div></div>' +
-      '<div class="sbs">' + bar('Máu', 60 * (c.hp || 1), 84, '#2a9d8f') + bar('Tốc độ', 250 * (c.sp || 1), 300, '#4895ef') + bar('Cú đấm', 12 + (c.x || 0), 17, '#e5383b') + '</div>' +
+    $('pvd').innerHTML = '<div class="dh"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><div><h3>' + b[0] + ' Ball <u class="tr ' + b[3] + '">Tier ' + b[3] + '</u></h3><small>' + ballTags(b).join(' · ') + '</small></div></div>' +
+      '<div class="sbs">' + bar('Máu', 100 * (c.hp || 1), 200, '#2a9d8f') + bar('Tốc độ', 250 * (c.sp || 1), 375, '#4895ef') + bar('Cú đấm', (12 + (c.x || 0)) * (c.dm0 || 1), 17, '#e5383b') + '</div>' +
       '<h4>Năng lực</h4><ul class="abl">' + descr(c).map(function (d) { return '<li><span>' + d[0] + '</span>' + d[1] + '</li>'; }).join('') + '</ul>' +
-      '<h4>Cách nhận biết trên sân</h4><p class="muted">Vòng tròn nhỏ quanh bóng là thanh hồi chiêu (đầy vòng là tung chiêu). Số bay lên có biểu tượng cho biết sát thương đến từ đâu: 👊 cú đấm · 🏹 đạn · 🗡️ lưỡi xoay · 🕳️ bẫy · ☠️ độc · 🔴 vòng sát thương · ⛓️ xiềng.</p>';
+      '<h4>Cách nhận biết trên sân</h4><p class="muted">Vòng tròn nhỏ quanh bóng là thanh hồi chiêu (đầy vòng là tung chiêu). Số bay lên có biểu tượng cho biết sát thương đến từ đâu: 👊 cú đấm · 🏹 đạn · 🗡️ lưỡi · 🕳️ bẫy · ☠️ độc · 🌀 tia · ⚡ điện · 🔥 lửa · 💣 bomb · ⚔️ chém · ⛓️ xiềng. Trận đấu BO3 (2 tim), sàn thu nhỏ sau 22s.</p>';
   }
   function openPv() { $('pv').hidden = false; renderPv(); }
   function closePv() { $('pv').hidden = true; }
@@ -1413,6 +1841,48 @@ button, input { font: inherit; color: inherit; }
   $('pvc').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) { PV.tag = b.dataset.t; renderPv(); } });
   $('pvg').addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) { PV.sel = +b.dataset.i; renderPv(); $('pvd').scrollIntoView({ block: 'nearest' }); } });
 
+  /* ---------- Trận tự chọn: chọn 2 bạn và sức mạnh rồi đấu ---------- */
+  var CUS = null, SORTED = BALLS.map(function (b, i) { return i; }).sort(function (a, b) { return TIERS.indexOf(BALLS[a][3]) - TIERS.indexOf(BALLS[b][3]) || BALLS[a][0].localeCompare(BALLS[b][0]); });
+  function cmDesc(k) {
+    var b = BALLS[+$('cmB' + k).value];
+    $('cmD' + k).innerHTML = '<u class="tr ' + b[3] + '">' + b[3] + '</u> ' + ballTags(b).join(' · ') + '<br>' + descr(b[2]).map(function (d) { return d[0] + ' ' + esc(d[1]); }).join('<br>');
+  }
+  function openCm() {
+    if (students.length < 2) { toast('Cần ít nhất 2 bạn để đấu'); return; }
+    var so = students.map(function (s) { return '<option value="' + s.id + '">' + esc(s.name) + '</option>'; }).join(''),
+      bo = SORTED.map(function (i) { return '<option value="' + i + '">[' + BALLS[i][3] + '] ' + BALLS[i][0] + '</option>'; }).join('');
+    [0, 1].forEach(function (k) {
+      $('cmS' + k).innerHTML = so; $('cmB' + k).innerHTML = bo;
+      $('cmS' + k).value = CUS && byId(CUS.s[k]) ? CUS.s[k] : students[k].id; $('cmB' + k).value = CUS ? CUS.b[k] : SORTED[k]; cmDesc(k);
+    });
+    $('cm').hidden = false;
+  }
+  function closeCm() { $('cm').hidden = true; }
+  function runCustom() { $('bvb').hidden = false; document.documentElement.style.overflow = 'hidden'; ac(); bvbStart(students.slice(), CUS); }
+  $('cm-open').addEventListener('click', openCm);
+  $('cmCancel').addEventListener('click', closeCm);
+  $('cmB0').addEventListener('change', function () { cmDesc(0); });
+  $('cmB1').addEventListener('change', function () { cmDesc(1); });
+  $('cmRand').addEventListener('click', function () {
+    var a = Math.floor(Math.random() * students.length), b = (a + 1 + Math.floor(Math.random() * (students.length - 1))) % students.length;
+    $('cmS0').value = students[a].id; $('cmS1').value = students[b].id;
+    [0, 1].forEach(function (k) { $('cmB' + k).value = SORTED[Math.floor(Math.random() * SORTED.length)]; cmDesc(k); });
+  });
+  $('cmGo').addEventListener('click', function () {
+    var s0 = $('cmS0').value, s1 = $('cmS1').value;
+    if (s0 === s1) { toast('Chọn 2 bạn khác nhau'); return; }
+    CUS = { s: [s0, s1], b: [+$('cmB0').value, +$('cmB1').value] }; closeCm(); runCustom();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('cm').hidden) closeCm(); });
+  function togglePause() { if (!BVB || BVB.phase === 'end') return; BVB.pause = !BVB.pause; $('bvpause').textContent = BVB.pause ? '▶' : '⏸'; $('bvpause').setAttribute('aria-label', BVB.pause ? 'Chơi tiếp' : 'Tạm dừng'); }
+  $('bvpause').addEventListener('click', togglePause);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { if (!$('pv').hidden) closePv(); else if (BVB && !$('bvb').hidden) closeBvb(); }
+    else if ((e.key === ' ' || e.key === 'p') && BVB && !$('bvb').hidden && BVB.phase === 'fight' && !/^(INPUT|BUTTON)$/.test((document.activeElement || {}).tagName || '')) { e.preventDefault(); togglePause(); }
+  });
+  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.btn,.pcard,.tlb')) sfx('tap'); }, true);
+  document.addEventListener('pointerdown', function (e) { if (e.target.closest && e.target.closest('[data-sid]')) sfx('pick'); }, true);
+  document.addEventListener('pointerup', function (e) { if (document.querySelector('.ghost')) sfx('drop2'); }, true);
   load(); render();
 })();
 </script>
