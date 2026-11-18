@@ -1,4 +1,5 @@
 <title>Sơ đồ lớp</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Patrick+Hand&display=swap">
 <style>
@@ -508,6 +509,151 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
 
 /* chế độ chọn người, ball random: ẩn phần chọn sức mạnh */
 #cm.cm-rb .cmb { display: none; }
+
+/* ===== V4: menu chế độ Ball vs Ball + giao diện điện thoại ===== */
+button, .btn, .pcard, .bvm-card { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.bvm-btn { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+/* --- màn hình chọn chế độ --- */
+.bvm-menu {
+  position: fixed; inset: 0; z-index: 45; overflow: auto; overscroll-behavior: contain;
+  background: radial-gradient(900px 480px at 10% -10%, color-mix(in srgb, #3a86ff 18%, transparent), transparent 60%),
+              radial-gradient(800px 460px at 100% 0%, color-mix(in srgb, #ef476f 16%, transparent), transparent 55%), var(--bg);
+  padding: max(18px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  animation: v3fade .2s;
+}
+.bvm-in { max-width: 820px; margin: 0 auto; }
+.bvm-top { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.bvm-top h2 { font-family: var(--font-hand); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; flex: 1; min-width: 0;
+  background: linear-gradient(90deg, #3a86ff, #ef476f); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bvm-sub { margin: 0 0 20px; color: var(--muted); }
+.bvm-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.bvm-card {
+  --c: var(--accent); position: relative; overflow: hidden; text-align: left; cursor: pointer;
+  display: flex; flex-direction: column; gap: 10px; padding: 20px 18px 16px; border-radius: 18px;
+  background: var(--surface); border: 2px solid var(--line); box-shadow: var(--shadow);
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.bvm-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 5px; background: var(--c); }
+.bvm-card:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 14px 34px color-mix(in srgb, var(--c) 30%, transparent); }
+.bvm-card:active { transform: scale(.98); }
+.bvm-card:focus-visible { outline: 3px solid var(--hl); outline-offset: 2px; }
+.bvm-card .ic { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-size: 30px; background: color-mix(in srgb, var(--c) 22%, transparent); }
+.bvm-card .tx b { display: block; font-size: 17px; line-height: 1.25; }
+.bvm-card .tx p { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.bvm-card .go { margin-top: auto; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+.bvm-card.t-rand { --c: #3a86ff; } .bvm-card.t-pick { --c: #ef476f; } .bvm-card.t-rb { --c: #f4a000; } .bvm-card.t-pv { --c: #2a9d8f; }
+.bvm-note { margin: 16px 2px 0; color: var(--muted); font-size: 12px; }
+
+/* --- thanh thao tác dưới cùng (chỉ điện thoại) --- */
+.mnav, .msheet, .msheet-bk { display: none; }
+.pv-bk { display: none; } .pv-sx { display: none; }
+.hd-m { display: none; }
+
+@media (max-width: 760px) {
+  body { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); padding-top: max(12px, env(safe-area-inset-top, 0px)); }
+  input, select, textarea { font-size: 16px !important; }
+  :root { --seat-h: 94px; }
+
+  /* header gọn: chỉ còn tiêu đề + ô tìm; mọi nút chuyển xuống thanh dưới */
+  .top { position: static; padding: 0; margin-bottom: 14px; backdrop-filter: none; -webkit-backdrop-filter: none; background: none; gap: 10px; }
+  .top h1 { font-size: 34px; }
+  .stats { font-size: 12.5px; }
+  .tools > .btn { display: none; }
+  .search input { height: 44px; border-radius: 12px; }
+  .board { font-size: 22px; padding: 10px 14px; margin-bottom: 16px; border-radius: 12px; }
+  .row-head h2 { font-size: 24px; }
+  .pool { border-radius: 14px; }
+  .chips { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .chip { padding: 8px 10px; }
+  .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+
+  .mnav {
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+    background: color-mix(in srgb, var(--surface) 90%, transparent); border-top: 1px solid var(--line);
+    backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  }
+  .mnav button {
+    border: 0; background: none; color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-height: 54px; padding: 4px 2px; border-radius: 14px; font-size: 11px; font-weight: 500; cursor: pointer; white-space: nowrap;
+  }
+  .mnav .ic { font-size: 21px; line-height: 1; }
+  .mnav button:active:not(:disabled) { transform: scale(.94); }
+  .mnav button:disabled { opacity: .35; }
+  .mnav .main { background: linear-gradient(135deg, var(--accent), #4895ef); color: var(--accent-ink); font-weight: 600; box-shadow: 0 4px 14px var(--glow); }
+  .mnav button:focus-visible { outline: 3px solid var(--hl); outline-offset: -2px; }
+
+  .msheet-bk { display: block; position: fixed; inset: 0; z-index: 41; background: rgba(8, 16, 12, .5); animation: v3fade .2s; }
+  .msheet {
+    display: grid; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 42; border-radius: 20px 20px 0 0;
+    background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -12px 40px rgba(0, 0, 0, .3);
+    padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    animation: v4sheet .25s cubic-bezier(.2, .9, .3, 1.05);
+  }
+  .msheet .btn { height: 48px; font-size: 15px; text-align: left; padding: 0 16px; border-radius: 12px; }
+  .msheet .hd { margin: 0 0 2px; font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+
+  /* menu chế độ: mỗi chế độ là 1 hàng lớn dễ bấm */
+  .bvm-top h2 { font-size: 34px; }
+  .bvm-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .bvm-card { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 16px 14px 14px; }
+  .bvm-card .ic { width: 52px; height: 52px; font-size: 27px; }
+  .bvm-card .go { display: none; }
+}
+@keyframes v4sheet { from { transform: translateY(100%); } }
+
+/* --- bên trong trận đấu trên điện thoại --- */
+@media (max-width: 760px) {
+  .bbar { gap: 6px; padding: max(8px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) 8px max(10px, env(safe-area-inset-left, 0px)); }
+  .bbar .pill { flex: 1 1 100%; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 4px 4px 4px 10px; }
+  .bbar .pill:last-child { padding: 4px; }
+  .bbar .pill:last-child .btn { flex: 1 1 auto; height: 38px; padding: 0 8px; font-size: 12.5px; }
+  .hd-m { display: inline; } .hd-d { display: none; }
+  .bvhud { gap: 6px; padding: 0 max(8px, env(safe-area-inset-left, 0px)); }
+  .pc { padding: 5px 6px; border-radius: 12px !important; }
+  .pc-top b, .pc-ball { font-size: 12px; }
+  .pc-top img, .dwho img { width: 22px; height: 22px; }
+  .bvhud .chips { max-height: 42px; gap: 3px; margin-top: 3px; }
+  .bvhud .chips span { font-size: 10px; padding: 0 5px; }
+  .bresult { padding: 18px 16px 14px; }
+  .bresult h3 { font-size: 30px; }
+  .bresult .acts .btn { flex: 1 1 auto; min-height: 44px; }
+}
+/* màn hình bốc bóng: 2 người cạnh nhau, 3 bóng xếp dọc từng hàng cho dễ đọc */
+@media (max-width: 700px) {
+  .bvdraft { padding: 8px; place-items: start center; }
+  .dwrap h2 { font-size: 28px; }
+  .dwrap p { font-size: 12px; margin-bottom: 8px; }
+  .dcol { padding: 8px 6px; border-radius: 10px; }
+  .dwho b { font-size: 12px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dcards { grid-template-columns: minmax(0, 1fr); gap: 5px; }
+  .dc { flex-direction: row; justify-content: flex-start; text-align: left; gap: 7px; padding: 6px 7px; border-radius: 12px; }
+  .dc i { order: 1; width: 28px; height: 28px; font-size: 16px; }
+  .dc b { order: 2; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+  .dc .tr { order: 3; position: static; }
+  .dc.hot { transform: scale(1.04); } .dc.win { transform: scale(1.06); } .dc.lose { transform: scale(.96); }
+  .dd { font-size: 11.5px; margin-top: 6px; }
+
+  /* bảng sức mạnh: danh sách ở trên, chạm vào 1 ball thì chi tiết trượt lên từ dưới */
+  .pv-box { padding: max(12px, env(safe-area-inset-top, 0px)) 12px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .pv-head h2 { font-size: 26px; flex-basis: 100%; }
+  .pv-head input { flex: 1; height: 44px; }
+  .pv-head .btn { height: 44px; }
+  .pv-chips { margin: 0 -12px; padding: 10px 12px; }
+  .pv-chips .btn { height: 36px; }
+  .pv-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+  .pv-detail {
+    position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 6; max-height: 78vh; max-height: 78dvh; overflow: auto; overscroll-behavior: contain;
+    border-radius: 20px 20px 0 0; border-width: 1px 0 0; box-shadow: 0 -14px 44px rgba(0, 0, 0, .35);
+    padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    transform: translateY(105%); visibility: hidden; transition: transform .25s cubic-bezier(.2, .9, .3, 1.05), visibility .25s;
+  }
+  .pv.sheet-open .pv-detail { transform: none; visibility: visible; }
+  .pv.sheet-open .pv-bk { display: block; position: fixed; inset: 0; z-index: 5; background: rgba(8, 16, 12, .5); animation: v3fade .2s; }
+  .pv-sx { display: flex; margin: 0 0 10px auto; height: 36px; align-items: center; }
+}
+@media (prefers-reduced-motion: reduce) { .msheet, .pv-detail, .bvm-menu, .bvm-card { animation: none !important; transition: none !important; } }
 </style>
 
 <div class="wrap">
@@ -522,10 +668,13 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
       <button class="btn" id="shuffle" type="button">Xếp ngẫu nhiên</button>
       <button class="btn" id="reset" type="button">Đặt lại</button>
       <button class="btn" id="bungee-open" type="button">Bungee</button>
-      <button class="btn" id="bvb-open" type="button">Ball vs Ball</button>
-      <button class="btn" id="cm-open" type="button">Tự chọn trận</button>
-      <button class="btn" id="cm-open2" type="button">Chọn người · ball random</button>
-      <button class="btn" id="pv-open" type="button">Bảng sức mạnh</button>
+      <button class="btn bvm-btn" id="bvm-open" type="button">⚔️ Ball vs Ball</button>
+      <span id="bvlegacy" hidden>
+        <button id="bvb-open" type="button">Ball vs Ball</button>
+        <button id="cm-open" type="button">Tự chọn trận</button>
+        <button id="cm-open2" type="button">Chọn người · ball random</button>
+        <button id="pv-open" type="button">Bảng sức mạnh</button>
+      </span>
       <button class="btn" id="add" type="button">Thêm bạn</button>
       <button class="btn primary" id="export" type="button">Xuất seats.js</button>
     </div>
@@ -587,7 +736,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     <div class="pill">
       <button class="btn" id="bvpause" type="button" aria-label="Tạm dừng">⏸</button>
       <button class="btn" id="bvmute" type="button" aria-label="Bật/tắt âm thanh">🔊</button>
-      <button class="btn" id="bvpv" type="button">Bảng sức mạnh</button>
+      <button class="btn" id="bvpv" type="button"><span class="hd-d">Bảng sức mạnh</span><span class="hd-m">Sức mạnh</span></button>
       <button class="btn" id="bvskip" type="button">Tua nhanh x3</button>
       <button class="btn" id="bvclose" type="button">Đóng</button>
     </div>
@@ -602,6 +751,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     <div class="pv-chips" id="pvc"></div>
     <div class="pv-main"><aside class="pv-detail" id="pvd"></aside><div class="pv-grid" id="pvg"></div></div>
   </div>
+  <div class="pv-bk" id="pvbk"></div>
 </div>
 <div class="scrim" id="cm" hidden>
   <div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -614,6 +764,55 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
+
+<div class="bvm-menu" id="bvmenu" hidden role="dialog" aria-modal="true" aria-labelledby="bvmT">
+  <div class="bvm-in">
+    <div class="bvm-top">
+      <h2 id="bvmT">Ball vs Ball</h2>
+      <button class="btn" id="bvmBack" type="button">← Quay lại</button>
+    </div>
+    <p class="bvm-sub">Chọn chế độ muốn chơi</p>
+    <div class="bvm-grid">
+      <button class="bvm-card t-rand" type="button" data-go="bvb-open">
+        <span class="ic">⚔️</span>
+        <span class="tx"><b>Đấu ngẫu nhiên</b><p>Máy bốc thăm 2 bạn, mỗi bạn bốc 3 bóng rồi vào trận BO3.</p></span>
+        <span class="go">Bắt đầu →</span>
+      </button>
+      <button class="bvm-card t-pick" type="button" data-go="cm-open">
+        <span class="ic">🎯</span>
+        <span class="tx"><b>Tự chọn trận</b><p>Tự chọn 2 bạn và sức mạnh (ball) cho từng bên rồi đấu.</p></span>
+        <span class="go">Chọn trận →</span>
+      </button>
+      <button class="bvm-card t-rb" type="button" data-go="cm-open2">
+        <span class="ic">🎲</span>
+        <span class="tx"><b>Chọn người · ball random</b><p>Tự chọn 2 bạn đấu, còn ball do máy bốc ngẫu nhiên.</p></span>
+        <span class="go">Chọn người →</span>
+      </button>
+      <button class="bvm-card t-pv" type="button" data-go="pv-open">
+        <span class="ic">📊</span>
+        <span class="tx"><b>Bảng sức mạnh</b><p>Xem năng lực và tier (S → D) của tất cả loại ball.</p></span>
+        <span class="go">Xem bảng →</span>
+      </button>
+    </div>
+    <p class="bvm-note">Đóng trận đấu xong sẽ quay lại màn hình này để chọn tiếp.</p>
+  </div>
+</div>
+
+<nav class="mnav" id="mnav" aria-label="Thao tác nhanh">
+  <button type="button" data-proxy="undo"><span class="ic">↩️</span><span>Hoàn tác</span></button>
+  <button type="button" data-proxy="shuffle"><span class="ic">🔀</span><span>Ngẫu nhiên</span></button>
+  <button type="button" class="main" id="mnavBv"><span class="ic">⚔️</span><span>Ball vs Ball</span></button>
+  <button type="button" data-proxy="bungee-open"><span class="ic">🎢</span><span>Bungee</span></button>
+  <button type="button" id="mnavMore" aria-haspopup="dialog"><span class="ic">⋯</span><span>Thêm</span></button>
+</nav>
+<div class="msheet-bk" id="mbk" hidden></div>
+<div class="msheet" id="msheet" hidden role="dialog" aria-label="Thêm thao tác">
+  <p class="hd">Thêm thao tác</p>
+  <button class="btn" type="button" data-proxy="add">➕ Thêm bạn</button>
+  <button class="btn" type="button" data-proxy="reset">♻️ Đặt lại</button>
+  <button class="btn primary" type="button" data-proxy="export">⬇️ Xuất seats.js</button>
+  <button class="btn" type="button" id="mclose">Đóng</button>
+</div>
 
 <script src="seats.js"></script>
 <script>
@@ -3088,7 +3287,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     }).join('') || '<p class="muted">Không có ball phù hợp.</p>';
     var b = BALLS[PV.sel], c = b[2];
     $('pvd').setAttribute('data-ball', bslug(b));
-    $('pvd').innerHTML = '<div class="dh"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><div><h3>' + b[0] + ' Ball <u class="tr ' + b[3] + '">Tier ' + b[3] + '</u></h3><small>' + ballTags(b).join(' · ') + '</small></div></div>' +
+    $('pvd').innerHTML = '<button type="button" class="btn pv-sx">Đóng ✕</button><div class="dh"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><div><h3>' + b[0] + ' Ball <u class="tr ' + b[3] + '">Tier ' + b[3] + '</u></h3><small>' + ballTags(b).join(' · ') + '</small></div></div>' +
       '<div class="sbs">' + bar('Máu', 100 * (c.hp || 1), 200, '#2a9d8f') + bar('Tốc độ', 250 * (c.sp || 1), 375, '#4895ef') + bar('Cú đấm', (12 + (c.x || 0)) * (c.dm0 || 1), 17, '#e5383b') + '</div>' +
       '<h4>Năng lực</h4><ul class="abl">' + descr(c).map(function (d) { return '<li><span>' + d[0] + '</span><div>' + (d[2] ? '<b class="hd">' + d[1] + '</b><ul class="sub">' + d[2].map(function (x) { var q = x.indexOf('|'); return '<li>' + (q > 0 ? '<b>' + x.slice(0, q) + '</b>' + x.slice(q + 1) : x) + '</li>'; }).join('') + '</ul>' : d[1]) + '</div></li>'; }).join('') + '</ul>' +
       '<h4>Cách nhận biết trên sân</h4><p class="muted">Vòng tròn nhỏ quanh bóng là thanh hồi chiêu (đầy vòng là tung chiêu). Số bay lên có biểu tượng cho biết sát thương đến từ đâu: 👊 cú đấm · 🏹 đạn · 🗡️ lưỡi · 🕳️ bẫy · ☠️ độc · 🌀 tia · ⚡ điện · 🔥 lửa · 💣 bomb · ⚔️ chém · ⛓️ xiềng. Trận đấu BO3 (2 tim), sàn thu nhỏ sau 22s. Cứ 8s có 1 vật phẩm trên sân: 💚 hồi 15 máu · 🛡️ kháng va chạm 1 lần · ⏱️ hồi chiêu -20% trong 6s.</p>';
@@ -3147,5 +3346,50 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   document.addEventListener('pointerdown', function (e) { if (e.target.closest && e.target.closest('[data-sid]')) sfx('pick'); }, true);
   document.addEventListener('pointerup', function (e) { if (document.querySelector('.ghost')) sfx('drop2'); }, true);
   load(); render();
+})();
+</script>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function fire(id) { var el = $(id); if (el) el.click(); }
+
+  /* ---- menu chọn chế độ Ball vs Ball ---- */
+  var menu = $('bvmenu'), on = false;
+  function sync() { menu.hidden = !on || !$('bvb').hidden; }   /* đang đấu thì ẩn, đóng trận xong thì hiện lại */
+  function openMenu() { on = true; sync(); menu.scrollTop = 0; var c = menu.querySelector('.bvm-card'); if (c) c.focus({ preventScroll: true }); }
+  function closeMenu() { on = false; sync(); }
+  $('bvm-open').addEventListener('click', openMenu);
+  $('mnavBv').addEventListener('click', openMenu);
+  $('bvmBack').addEventListener('click', closeMenu);
+  menu.addEventListener('click', function (e) {
+    var c = e.target.closest && e.target.closest('[data-go]');
+    if (c) fire(c.getAttribute('data-go'));
+  });
+  new MutationObserver(sync).observe($('bvb'), { attributes: true, attributeFilter: ['hidden'] });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !menu.hidden && $('cm').hidden && $('pv').hidden && $('bvb').hidden) closeMenu();
+  }, true);
+
+  /* ---- thanh dưới + sheet "Thêm" (điện thoại) ---- */
+  var sheet = $('msheet'), bk = $('mbk');
+  function showSheet(v) { sheet.hidden = !v; bk.hidden = !v; if (v) { var b = sheet.querySelector('.btn'); if (b) b.focus({ preventScroll: true }); } }
+  $('mnavMore').addEventListener('click', function () { showSheet(sheet.hidden); });
+  $('mclose').addEventListener('click', function () { showSheet(false); });
+  bk.addEventListener('click', function () { showSheet(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) showSheet(false); }, true);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-proxy]'), function (b) {
+    b.addEventListener('click', function () { showSheet(false); fire(b.getAttribute('data-proxy')); });
+  });
+  var undo = $('undo'), nu = document.querySelector('.mnav [data-proxy="undo"]');
+  function mirror() { nu.disabled = undo.disabled; }
+  mirror(); new MutationObserver(mirror).observe(undo, { attributes: true, attributeFilter: ['disabled'] });
+
+  /* ---- bảng sức mạnh: chi tiết là sheet trượt lên (điện thoại) ---- */
+  var pv = $('pv');
+  $('pvg').addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-i]')) pv.classList.add('sheet-open'); });
+  $('pvbk').addEventListener('click', function () { pv.classList.remove('sheet-open'); });
+  $('pvd').addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.pv-sx')) pv.classList.remove('sheet-open'); });
+  new MutationObserver(function () { if (pv.hidden) pv.classList.remove('sheet-open'); }).observe(pv, { attributes: true, attributeFilter: ['hidden'] });
 })();
 </script>
