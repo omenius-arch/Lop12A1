@@ -355,6 +355,149 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
 .dc[data-ball="megumi"] i, .pcard[data-ball="megumi"] i, .pc-ball[data-ball="megumi"] i, .pv-detail[data-ball="megumi"] .dh i { animation: mgzap 1.4s ease-in-out infinite; }
 .dc[data-ball="jiji"] i, .pcard[data-ball="jiji"] i, .pc-ball[data-ball="jiji"] i, .pv-detail[data-ball="jiji"] .dh i { animation: jjblink 3s ease-in-out infinite; }
 }
+/* ---- Bản 0.6: giao diện riêng cho mọi ball còn lại (cùng phong cách các ball cậu đã làm) ---- */
+@keyframes thp { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.14); } }
+@keyframes thw { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+@keyframes ths { 0%, 75%, 100% { transform: rotate(0); } 90% { transform: rotate(360deg); } }
+@keyframes thf { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes thk { 0%, 88%, 100% { transform: translateX(0); } 92% { transform: translateX(-2px); } 96% { transform: translateX(2px); } }
+@keyframes thq { 0%, 100% { opacity: 1; } 45% { opacity: .55; } 50% { opacity: 1; } 70% { opacity: .7; } }
+@keyframes thg { 0%, 100% { filter: drop-shadow(0 0 2px var(--tc)); } 50% { filter: drop-shadow(0 0 8px var(--tc)); } }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="shackles"] { --tc: rgb(125,133,151); background-image: repeating-linear-gradient(45deg, transparent 0 9px, rgba(173,181,189,.18) 9px 11px), linear-gradient(150deg, rgba(125,133,151,.32), rgba(173,181,189,.12)); box-shadow: inset 0 0 0 1px rgba(125,133,151,.85), 0 0 12px rgba(173,181,189,.35); }
+:is(.dc, .pcard)[data-ball="shackles"] b, .pc-ball[data-ball="shackles"], .pv-detail[data-ball="shackles"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="spider"] { --tc: rgb(217,217,227); background-image: repeating-conic-gradient(from 0deg at 88% 12%, rgba(233,236,239,.22) 0 3deg, transparent 3deg 20deg), repeating-radial-gradient(circle at 88% 12%, rgba(233,236,239,.16) 0 1px, transparent 1px 14px), linear-gradient(150deg, rgba(217,217,227,.32), rgba(233,236,239,.12)); box-shadow: inset 0 0 0 1px rgba(217,217,227,.85), 0 0 12px rgba(233,236,239,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="laser"] { --tc: rgb(255,77,109); background-image: repeating-linear-gradient(0deg, transparent 0 9px, rgba(255,77,109,.18) 9px 11px), linear-gradient(150deg, rgba(255,77,109,.32), rgba(255,77,109,.12)); box-shadow: inset 0 0 0 1px rgba(255,77,109,.85), 0 0 12px rgba(255,77,109,.35); }
+:is(.dc, .pcard)[data-ball="laser"] b, .pc-ball[data-ball="laser"], .pv-detail[data-ball="laser"] h3 { text-shadow: 0 0 6px rgba(255,77,109,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="vampire"] { --tc: rgb(193,18,31); background-image: radial-gradient(circle at 85% 15%, rgba(193,18,31,.50), transparent 55%), linear-gradient(200deg, rgba(106,4,15,.0), rgba(106,4,15,.20)); box-shadow: inset 0 0 0 1px rgba(193,18,31,.85), 0 0 12px rgba(106,4,15,.35); }
+:is(.dc, .pcard)[data-ball="vampire"] b, .pc-ball[data-ball="vampire"], .pv-detail[data-ball="vampire"] h3 { text-shadow: 0 0 6px rgba(193,18,31,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="conductor"] { --tc: rgb(255,214,10); background-image: repeating-linear-gradient(135deg, rgba(255,214,10,.34) 0 8px, rgba(0,0,0,.28) 8px 16px); box-shadow: inset 0 0 0 1px rgba(255,214,10,.85), 0 0 12px rgba(0,0,0,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="zone"] { --tc: rgb(229,56,59); background-image: repeating-linear-gradient(45deg, rgba(229,56,59,.34) 0 8px, rgba(0,0,0,.28) 8px 16px); box-shadow: inset 0 0 0 1px rgba(229,56,59,.85), 0 0 12px rgba(229,56,59,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="glass"] { --tc: rgb(168,218,220); background-image: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.38) 48%, transparent 58%), linear-gradient(150deg, rgba(168,218,220,.32), rgba(224,251,252,.12)); box-shadow: inset 0 0 0 1px rgba(168,218,220,.85), 0 0 12px rgba(224,251,252,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="dice"] { --tc: rgb(241,241,241); background-image: radial-gradient(circle, rgba(231,111,81,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(241,241,241,.32), rgba(231,111,81,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(241,241,241,.85), 0 0 12px rgba(231,111,81,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="hive"] { --tc: rgb(244,162,97); background-image: radial-gradient(circle, rgba(255,209,102,.30) 3px, transparent 4px) 0 0/12px 12px, radial-gradient(circle, rgba(255,209,102,.30) 3px, transparent 4px) 6px 6px/12px 12px, linear-gradient(150deg, rgba(244,162,97,.32), rgba(255,209,102,.12)); box-shadow: inset 0 0 0 1px rgba(244,162,97,.85), 0 0 12px rgba(255,209,102,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="thief"] { --tc: rgb(108,117,125); background-image: radial-gradient(circle at 85% 15%, rgba(108,117,125,.50), transparent 55%), linear-gradient(200deg, rgba(52,58,64,.0), rgba(52,58,64,.20)); box-shadow: inset 0 0 0 1px rgba(108,117,125,.85), 0 0 12px rgba(52,58,64,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="snake"] { --tc: rgb(149,213,178); background-image: radial-gradient(circle, rgba(45,106,79,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(149,213,178,.32), rgba(45,106,79,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(149,213,178,.85), 0 0 12px rgba(45,106,79,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="electric"] { --tc: rgb(255,238,50); background-image: repeating-linear-gradient(115deg, transparent 0 9px, rgba(162,210,255,.18) 9px 11px), linear-gradient(150deg, rgba(255,238,50,.32), rgba(162,210,255,.12)); box-shadow: inset 0 0 0 1px rgba(255,238,50,.85), 0 0 12px rgba(162,210,255,.35); }
+:is(.dc, .pcard)[data-ball="electric"] b, .pc-ball[data-ball="electric"], .pv-detail[data-ball="electric"] h3 { text-shadow: 0 0 6px rgba(255,238,50,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="cannon"] { --tc: rgb(73,80,87); background-image: radial-gradient(circle at 50% 125%, rgba(73,80,87,.60), transparent 62%), linear-gradient(180deg, rgba(255,183,3,.22), rgba(255,183,3,.06)); box-shadow: inset 0 0 0 1px rgba(73,80,87,.85), 0 0 12px rgba(255,183,3,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="ice-cone"] { --tc: rgb(144,224,239); background-image: radial-gradient(circle, rgba(202,240,248,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(144,224,239,.32), rgba(202,240,248,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(144,224,239,.85), 0 0 12px rgba(202,240,248,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="bomb"] { --tc: rgb(251,86,7); background-image: radial-gradient(circle at 50% 125%, rgba(251,86,7,.60), transparent 62%), linear-gradient(180deg, rgba(255,190,11,.22), rgba(255,190,11,.06)); box-shadow: inset 0 0 0 1px rgba(251,86,7,.85), 0 0 12px rgba(255,190,11,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="harpoon"] { --tc: rgb(72,149,239); background-image: repeating-radial-gradient(circle at 50% 135%, transparent 0 8px, rgba(162,210,255,.26) 8px 10px), linear-gradient(150deg, rgba(72,149,239,.32), rgba(162,210,255,.12)); box-shadow: inset 0 0 0 1px rgba(72,149,239,.85), 0 0 12px rgba(162,210,255,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="viruss"] { --tc: rgb(128,185,24); background-image: radial-gradient(circle, rgba(181,228,140,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(128,185,24,.32), rgba(181,228,140,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(128,185,24,.85), 0 0 12px rgba(181,228,140,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="thukuna"] { --tc: rgb(255,159,28); background-image: repeating-linear-gradient(-30deg, transparent 0 9px, rgba(43,45,66,.18) 9px 11px), linear-gradient(150deg, rgba(255,159,28,.32), rgba(43,45,66,.12)); box-shadow: inset 0 0 0 1px rgba(255,159,28,.85), 0 0 12px rgba(43,45,66,.35); }
+:is(.dc, .pcard)[data-ball="thukuna"] b, .pc-ball[data-ball="thukuna"], .pv-detail[data-ball="thukuna"] h3 { text-shadow: 0 0 6px rgba(255,159,28,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="beam"] { --tc: rgb(224,170,255); background-image: radial-gradient(circle at 85% 15%, rgba(224,170,255,.50), transparent 55%), linear-gradient(200deg, rgba(199,125,255,.0), rgba(199,125,255,.20)); box-shadow: inset 0 0 0 1px rgba(224,170,255,.85), 0 0 12px rgba(199,125,255,.35); }
+:is(.dc, .pcard)[data-ball="beam"] b, .pc-ball[data-ball="beam"], .pv-detail[data-ball="beam"] h3 { text-shadow: 0 0 6px rgba(224,170,255,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="axe"] { --tc: rgb(181,101,29); background-image: repeating-linear-gradient(90deg, transparent 0 9px, rgba(138,90,43,.18) 9px 11px), linear-gradient(150deg, rgba(181,101,29,.32), rgba(138,90,43,.12)); box-shadow: inset 0 0 0 1px rgba(181,101,29,.85), 0 0 12px rgba(138,90,43,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="apple"] { --tc: rgb(230,57,70); background-image: radial-gradient(circle at 85% 15%, rgba(230,57,70,.50), transparent 55%), linear-gradient(200deg, rgba(106,153,78,.0), rgba(106,153,78,.20)); box-shadow: inset 0 0 0 1px rgba(230,57,70,.85), 0 0 12px rgba(106,153,78,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="frost"] { --tc: rgb(189,224,254); background-image: radial-gradient(circle, rgba(255,255,255,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(189,224,254,.32), rgba(255,255,255,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(189,224,254,.85), 0 0 12px rgba(255,255,255,.35); }
+:is(.dc, .pcard)[data-ball="frost"] b, .pc-ball[data-ball="frost"], .pv-detail[data-ball="frost"] h3 { text-shadow: 0 0 6px rgba(189,224,254,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="blade"] { --tc: rgb(173,181,189); background-image: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.38) 48%, transparent 58%), linear-gradient(150deg, rgba(173,181,189,.32), rgba(222,226,230,.12)); box-shadow: inset 0 0 0 1px rgba(173,181,189,.85), 0 0 12px rgba(222,226,230,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="big-spike"] { --tc: rgb(141,110,99); background-image: repeating-linear-gradient(60deg, transparent 0 9px, rgba(109,76,65,.18) 9px 11px), linear-gradient(150deg, rgba(141,110,99,.32), rgba(109,76,65,.12)); box-shadow: inset 0 0 0 1px rgba(141,110,99,.85), 0 0 12px rgba(109,76,65,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="reforge"] { --tc: rgb(255,123,0); background-image: radial-gradient(circle at 50% 125%, rgba(255,123,0,.60), transparent 62%), linear-gradient(180deg, rgba(255,190,11,.22), rgba(255,190,11,.06)); box-shadow: inset 0 0 0 1px rgba(255,123,0,.85), 0 0 12px rgba(255,190,11,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="bow"] { --tc: rgb(207,168,106); background-image: repeating-linear-gradient(20deg, transparent 0 9px, rgba(169,132,103,.18) 9px 11px), linear-gradient(150deg, rgba(207,168,106,.32), rgba(169,132,103,.12)); box-shadow: inset 0 0 0 1px rgba(207,168,106,.85), 0 0 12px rgba(169,132,103,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="electro-king"] { --tc: rgb(249,199,79); background-image: repeating-linear-gradient(115deg, transparent 0 9px, rgba(144,224,239,.18) 9px 11px), linear-gradient(150deg, rgba(249,199,79,.32), rgba(144,224,239,.12)); box-shadow: inset 0 0 0 1px rgba(249,199,79,.85), 0 0 12px rgba(144,224,239,.35); }
+:is(.dc, .pcard)[data-ball="electro-king"] b, .pc-ball[data-ball="electro-king"], .pv-detail[data-ball="electro-king"] h3 { text-shadow: 0 0 6px rgba(249,199,79,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="fibonacci"] { --tc: rgb(255,183,3); background-image: repeating-radial-gradient(circle at 90% 10%, rgba(255,183,3,.24) 0 6px, transparent 6px 12px), linear-gradient(150deg, rgba(255,183,3,.32), rgba(255,209,102,.12)); box-shadow: inset 0 0 0 1px rgba(255,183,3,.85), 0 0 12px rgba(255,209,102,.35); }
+:is(.dc, .pcard)[data-ball="fibonacci"] b, .pc-ball[data-ball="fibonacci"], .pv-detail[data-ball="fibonacci"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="burst"] { --tc: rgb(255,109,0); background-image: repeating-linear-gradient(0deg, transparent 0 9px, rgba(255,209,102,.18) 9px 11px), linear-gradient(150deg, rgba(255,109,0,.32), rgba(255,209,102,.12)); box-shadow: inset 0 0 0 1px rgba(255,109,0,.85), 0 0 12px rgba(255,209,102,.35); }
+:is(.dc, .pcard)[data-ball="burst"] b, .pc-ball[data-ball="burst"], .pv-detail[data-ball="burst"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="fighter"] { --tc: rgb(156,163,175); background-image: conic-gradient(rgba(156,163,175,.28) 25%, rgba(107,114,128,.10) 0 50%, rgba(156,163,175,.28) 0 75%, rgba(107,114,128,.10) 0); background-size: 18px 18px; box-shadow: inset 0 0 0 1px rgba(156,163,175,.85), 0 0 12px rgba(107,114,128,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="charge"] { --tc: rgb(167,139,250); background-image: radial-gradient(circle at 85% 15%, rgba(167,139,250,.50), transparent 55%), linear-gradient(200deg, rgba(196,181,253,.0), rgba(196,181,253,.20)); box-shadow: inset 0 0 0 1px rgba(167,139,250,.85), 0 0 12px rgba(196,181,253,.35); }
+:is(.dc, .pcard)[data-ball="charge"] b, .pc-ball[data-ball="charge"], .pv-detail[data-ball="charge"] h3 { text-shadow: 0 0 6px rgba(167,139,250,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="chess"] { --tc: rgb(233,236,239); background-image: conic-gradient(rgba(233,236,239,.28) 25%, rgba(43,45,66,.10) 0 50%, rgba(233,236,239,.28) 0 75%, rgba(43,45,66,.10) 0); background-size: 18px 18px; box-shadow: inset 0 0 0 1px rgba(233,236,239,.85), 0 0 12px rgba(43,45,66,.35); }
+:is(.dc, .pcard)[data-ball="chess"] b, .pc-ball[data-ball="chess"], .pv-detail[data-ball="chess"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="saitama-l-i"] { --tc: rgb(206,212,218); background-image: repeating-linear-gradient(90deg, transparent 0 9px, rgba(255,214,10,.18) 9px 11px), linear-gradient(150deg, rgba(206,212,218,.32), rgba(255,214,10,.12)); box-shadow: inset 0 0 0 1px rgba(206,212,218,.85), 0 0 12px rgba(255,214,10,.35); }
+:is(.dc, .pcard)[data-ball="saitama-l-i"] b, .pc-ball[data-ball="saitama-l-i"], .pv-detail[data-ball="saitama-l-i"] h3 { font-family: 'Courier New', ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="cell"] { --tc: rgb(82,183,136); background-image: radial-gradient(circle, rgba(149,213,178,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(82,183,136,.32), rgba(149,213,178,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(82,183,136,.85), 0 0 12px rgba(149,213,178,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="verity"] { --tc: rgb(157,78,221); background-image: repeating-radial-gradient(circle at 90% 10%, rgba(157,78,221,.24) 0 6px, transparent 6px 12px), linear-gradient(150deg, rgba(157,78,221,.32), rgba(199,125,255,.12)); box-shadow: inset 0 0 0 1px rgba(157,78,221,.85), 0 0 12px rgba(199,125,255,.35); }
+:is(.dc, .pcard)[data-ball="verity"] b, .pc-ball[data-ball="verity"], .pv-detail[data-ball="verity"] h3 { text-shadow: 0 0 6px rgba(157,78,221,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="potion"] { --tc: rgb(181,23,158); background-image: radial-gradient(circle, rgba(76,201,240,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(181,23,158,.32), rgba(76,201,240,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(181,23,158,.85), 0 0 12px rgba(76,201,240,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="machine-gun"] { --tc: rgb(52,58,64); background-image: repeating-linear-gradient(0deg, transparent 0 9px, rgba(255,183,3,.18) 9px 11px), linear-gradient(150deg, rgba(52,58,64,.32), rgba(255,183,3,.12)); box-shadow: inset 0 0 0 1px rgba(52,58,64,.85), 0 0 12px rgba(255,183,3,.35); }
+:is(.dc, .pcard)[data-ball="machine-gun"] b, .pc-ball[data-ball="machine-gun"], .pv-detail[data-ball="machine-gun"] h3 { font-family: 'Courier New', ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="light-yagami"] { --tc: rgb(74,78,105); background-image: repeating-linear-gradient(90deg, transparent 0 9px, rgba(241,241,241,.18) 9px 11px), linear-gradient(150deg, rgba(74,78,105,.32), rgba(241,241,241,.12)); box-shadow: inset 0 0 0 1px rgba(74,78,105,.85), 0 0 12px rgba(241,241,241,.35); }
+:is(.dc, .pcard)[data-ball="light-yagami"] b, .pc-ball[data-ball="light-yagami"], .pv-detail[data-ball="light-yagami"] h3 { font-family: Georgia, serif; font-style: italic; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="nuke"] { --tc: rgb(198,255,0); background-image: repeating-linear-gradient(45deg, rgba(198,255,0,.34) 0 8px, rgba(0,0,0,.28) 8px 16px); box-shadow: inset 0 0 0 1px rgba(198,255,0,.85), 0 0 12px rgba(158,240,26,.35); }
+:is(.dc, .pcard)[data-ball="nuke"] b, .pc-ball[data-ball="nuke"], .pv-detail[data-ball="nuke"] h3 { font-family: 'Courier New', ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="jogo"] { --tc: rgb(255,69,0); background-image: radial-gradient(circle at 50% 125%, rgba(255,69,0,.60), transparent 62%), linear-gradient(180deg, rgba(255,209,102,.22), rgba(255,209,102,.06)); box-shadow: inset 0 0 0 1px rgba(255,69,0,.85), 0 0 12px rgba(255,209,102,.35); }
+:is(.dc, .pcard)[data-ball="jogo"] b, .pc-ball[data-ball="jogo"], .pv-detail[data-ball="jogo"] h3 { text-shadow: 0 0 6px rgba(255,69,0,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="yuta-okkotsu"] { --tc: rgb(142,202,230); background-image: radial-gradient(circle at 85% 15%, rgba(142,202,230,.50), transparent 55%), linear-gradient(200deg, rgba(189,224,254,.0), rgba(189,224,254,.20)); box-shadow: inset 0 0 0 1px rgba(142,202,230,.85), 0 0 12px rgba(189,224,254,.35); }
+:is(.dc, .pcard)[data-ball="yuta-okkotsu"] b, .pc-ball[data-ball="yuta-okkotsu"], .pv-detail[data-ball="yuta-okkotsu"] h3 { text-shadow: 0 0 6px rgba(142,202,230,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="berserk"] { --tc: rgb(155,34,38); background-image: radial-gradient(circle at 85% 15%, rgba(155,34,38,.50), transparent 55%), linear-gradient(200deg, rgba(43,45,66,.0), rgba(43,45,66,.20)); box-shadow: inset 0 0 0 1px rgba(155,34,38,.85), 0 0 12px rgba(43,45,66,.35); }
+:is(.dc, .pcard)[data-ball="berserk"] b, .pc-ball[data-ball="berserk"], .pv-detail[data-ball="berserk"] h3 { text-shadow: 0 0 6px rgba(155,34,38,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="priest"] { --tc: rgb(241,250,238); background-image: radial-gradient(circle at 85% 15%, rgba(241,250,238,.50), transparent 55%), linear-gradient(200deg, rgba(255,230,109,.0), rgba(255,230,109,.20)); box-shadow: inset 0 0 0 1px rgba(241,250,238,.85), 0 0 12px rgba(255,230,109,.35); }
+:is(.dc, .pcard)[data-ball="priest"] b, .pc-ball[data-ball="priest"], .pv-detail[data-ball="priest"] h3 { text-shadow: 0 0 6px rgba(241,250,238,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="princess"] { --tc: rgb(255,143,171); background-image: radial-gradient(circle, rgba(255,240,243,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(255,143,171,.32), rgba(255,240,243,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(255,143,171,.85), 0 0 12px rgba(255,240,243,.35); }
+:is(.dc, .pcard)[data-ball="princess"] b, .pc-ball[data-ball="princess"], .pv-detail[data-ball="princess"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="lildragon"] { --tc: rgb(255,127,17); background-image: radial-gradient(circle at 50% 125%, rgba(255,127,17,.60), transparent 62%), linear-gradient(180deg, rgba(255,190,11,.22), rgba(255,190,11,.06)); box-shadow: inset 0 0 0 1px rgba(255,127,17,.85), 0 0 12px rgba(255,190,11,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="babyboo"] { --tc: rgb(255,175,204); background-image: radial-gradient(circle, rgba(189,224,254,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(255,175,204,.32), rgba(189,224,254,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(255,175,204,.85), 0 0 12px rgba(189,224,254,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="consume"] { --tc: rgb(157,141,241); background-image: repeating-radial-gradient(circle at 90% 10%, rgba(157,141,241,.24) 0 6px, transparent 6px 12px), linear-gradient(150deg, rgba(157,141,241,.32), rgba(36,0,70,.12)); box-shadow: inset 0 0 0 1px rgba(157,141,241,.85), 0 0 12px rgba(36,0,70,.35); }
+:is(.dc, .pcard)[data-ball="consume"] b, .pc-ball[data-ball="consume"], .pv-detail[data-ball="consume"] h3 { text-shadow: 0 0 6px rgba(157,141,241,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="bum"] { --tc: rgb(255,209,102); background-image: radial-gradient(circle, rgba(224,161,0,.30) 2px, transparent 3px), linear-gradient(150deg, rgba(255,209,102,.32), rgba(224,161,0,.12)); background-size: 14px 14px, auto; box-shadow: inset 0 0 0 1px rgba(255,209,102,.85), 0 0 12px rgba(224,161,0,.35); }
+:is(.dc, .pcard)[data-ball="bum"] b, .pc-ball[data-ball="bum"], .pv-detail[data-ball="bum"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="poseidon"] { --tc: rgb(0,180,216); background-image: repeating-radial-gradient(circle at 50% 135%, transparent 0 8px, rgba(144,224,239,.26) 8px 10px), linear-gradient(150deg, rgba(0,180,216,.32), rgba(144,224,239,.12)); box-shadow: inset 0 0 0 1px rgba(0,180,216,.85), 0 0 12px rgba(144,224,239,.35); }
+:is(.dc, .pcard)[data-ball="poseidon"] b, .pc-ball[data-ball="poseidon"], .pv-detail[data-ball="poseidon"] h3 { letter-spacing: .06em; }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="blood-demon"] { --tc: rgb(139,30,45); background-image: radial-gradient(circle at 85% 15%, rgba(139,30,45,.50), transparent 55%), linear-gradient(200deg, rgba(74,10,20,.0), rgba(74,10,20,.20)); box-shadow: inset 0 0 0 1px rgba(139,30,45,.85), 0 0 12px rgba(74,10,20,.35); }
+:is(.dc, .pcard)[data-ball="blood-demon"] b, .pc-ball[data-ball="blood-demon"], .pv-detail[data-ball="blood-demon"] h3 { text-shadow: 0 0 6px rgba(139,30,45,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="teacher"] { --tc: rgb(201,162,74); background-image: repeating-linear-gradient(0deg, transparent 0 9px, rgba(230,200,114,.18) 9px 11px), linear-gradient(150deg, rgba(201,162,74,.32), rgba(230,200,114,.12)); box-shadow: inset 0 0 0 1px rgba(201,162,74,.85), 0 0 12px rgba(230,200,114,.35); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="g-"] { --tc: rgb(127,184,216); background-image: repeating-radial-gradient(circle at 90% 10%, rgba(127,184,216,.24) 0 6px, transparent 6px 12px), linear-gradient(150deg, rgba(127,184,216,.32), rgba(199,125,255,.12)); box-shadow: inset 0 0 0 1px rgba(127,184,216,.85), 0 0 12px rgba(199,125,255,.35); }
+:is(.dc, .pcard)[data-ball="g-"] b, .pc-ball[data-ball="g-"], .pv-detail[data-ball="g-"] h3 { text-shadow: 0 0 6px rgba(127,184,216,.6); }
+:is(.dc, .pcard, .pc, .pv-detail)[data-ball="ayase"] { --tc: rgb(169,155,214); background-image: radial-gradient(circle at 85% 15%, rgba(169,155,214,.50), transparent 55%), linear-gradient(200deg, rgba(255,255,255,.0), rgba(255,255,255,.20)); box-shadow: inset 0 0 0 1px rgba(169,155,214,.85), 0 0 12px rgba(255,255,255,.35); }
+:is(.dc, .pcard)[data-ball="ayase"] b, .pc-ball[data-ball="ayase"], .pv-detail[data-ball="ayase"] h3 { text-shadow: 0 0 6px rgba(169,155,214,.6); }
+@media (prefers-reduced-motion: no-preference) {
+:is(.dc, .pcard, .pc-ball)[data-ball="shackles"] i, .pv-detail[data-ball="shackles"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="spider"] i, .pv-detail[data-ball="spider"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="laser"] i, .pv-detail[data-ball="laser"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="vampire"] i, .pv-detail[data-ball="vampire"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="conductor"] i, .pv-detail[data-ball="conductor"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="zone"] i, .pv-detail[data-ball="zone"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="glass"] i, .pv-detail[data-ball="glass"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="dice"] i, .pv-detail[data-ball="dice"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="hive"] i, .pv-detail[data-ball="hive"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="thief"] i, .pv-detail[data-ball="thief"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="snake"] i, .pv-detail[data-ball="snake"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="electric"] i, .pv-detail[data-ball="electric"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="cannon"] i, .pv-detail[data-ball="cannon"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="ice-cone"] i, .pv-detail[data-ball="ice-cone"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="bomb"] i, .pv-detail[data-ball="bomb"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="harpoon"] i, .pv-detail[data-ball="harpoon"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="viruss"] i, .pv-detail[data-ball="viruss"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="thukuna"] i, .pv-detail[data-ball="thukuna"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="beam"] i, .pv-detail[data-ball="beam"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="axe"] i, .pv-detail[data-ball="axe"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="apple"] i, .pv-detail[data-ball="apple"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="frost"] i, .pv-detail[data-ball="frost"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="blade"] i, .pv-detail[data-ball="blade"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="big-spike"] i, .pv-detail[data-ball="big-spike"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="reforge"] i, .pv-detail[data-ball="reforge"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="bow"] i, .pv-detail[data-ball="bow"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="electro-king"] i, .pv-detail[data-ball="electro-king"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="fibonacci"] i, .pv-detail[data-ball="fibonacci"] .dh i { animation: ths 3.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="burst"] i, .pv-detail[data-ball="burst"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="fighter"] i, .pv-detail[data-ball="fighter"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="charge"] i, .pv-detail[data-ball="charge"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="saitama-l-i"] i, .pv-detail[data-ball="saitama-l-i"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="cell"] i, .pv-detail[data-ball="cell"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="verity"] i, .pv-detail[data-ball="verity"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="potion"] i, .pv-detail[data-ball="potion"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="machine-gun"] i, .pv-detail[data-ball="machine-gun"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="light-yagami"] i, .pv-detail[data-ball="light-yagami"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="nuke"] i, .pv-detail[data-ball="nuke"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="jogo"] i, .pv-detail[data-ball="jogo"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="yuta-okkotsu"] i, .pv-detail[data-ball="yuta-okkotsu"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="berserk"] i, .pv-detail[data-ball="berserk"] .dh i { animation: thk 2s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="priest"] i, .pv-detail[data-ball="priest"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="princess"] i, .pv-detail[data-ball="princess"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="lildragon"] i, .pv-detail[data-ball="lildragon"] .dh i { animation: thq 1.6s linear infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="babyboo"] i, .pv-detail[data-ball="babyboo"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="consume"] i, .pv-detail[data-ball="consume"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="bum"] i, .pv-detail[data-ball="bum"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="poseidon"] i, .pv-detail[data-ball="poseidon"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="blood-demon"] i, .pv-detail[data-ball="blood-demon"] .dh i { animation: thp 1.2s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="teacher"] i, .pv-detail[data-ball="teacher"] .dh i { animation: thw .8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="g-"] i, .pv-detail[data-ball="g-"] .dh i { animation: thg 1.8s ease-in-out infinite; }
+:is(.dc, .pcard, .pc-ball)[data-ball="ayase"] i, .pv-detail[data-ball="ayase"] .dh i { animation: thf 2.4s ease-in-out infinite; }
+}
 </style>
 
 <div class="wrap">
@@ -1550,11 +1693,11 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     if (!SFX_ON || !AC) return;
     var t = performance.now(), s = vsig(u.vn);
     if (t - (u['q' + k] || 0) < 130) return; u['q' + k] = t; VQ = t; curPan = 0;
-    try { VF[VFAM[k]](s.f, s.w, s.iv, s.vb); } catch (e) {}
+    try { var rc = SK[u.vn + '|' + k]; if (rc) play(rc, s.f); else VF[VFAM[k]](s.f, s.w, s.iv, s.vb); } catch (e) {}
   }
   function voiceHit(u) {
     if (!SFX_ON || !AC) return; var t = performance.now(); if (t - (u.qh || 0) < 90) return; u.qh = t; var s = vsig(u.vn);
-    try { tone(s.f * 1.3, 0.09, s.w, 0.07, 0.55); tone(s.f * 1.3 * s.iv, 0.07, 'sine', 0.04, 0.7, 0.02); } catch (e) {}
+    try { hitVoice(u, s); } catch (e) {}
   }
   SFXS.dot = function () { tone(170, 0.1, 'sawtooth', 0.035, 1.6); };
   SFXS.fire = function () { noise(0.35, 0.18, 1400, 'bandpass', 1, 0.4); tone(180, 0.3, 'sawtooth', 0.07, 0.6); };
@@ -1581,7 +1724,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
      5 ball mới: Okarun, Makima, Nobita, Steve, Inumaki (mỗi ball có sfx + hiệu ứng + CSS riêng). */
   BALLS.push(
     ['Okarun', '#f0b323', { ok: [12, 25, 2, 1.3, 0.75, 6, 7], ic: '👺' }, 'A'],
-    ['Makima', '#d62828', { mk: [10, 3, 2, 0.8], ic: '👁️' }, 'S'],
+    ['Makima', '#d62828', { mk: [10, 2, 2, 0.8], ic: '👁️' }, 'S'],
     ['Nobita', '#4f8fe0', { nb: [6, 0.6, 5, 3.5], hp: 0.8, x: -5, ic: '🔫' }, 'B'],
     ['Steve', '#2ec4b6', { sv: 1, ic: '⛏️' }, 'B'],
     ['Inumaki', '#a3c4bc', { ina: [0, 7.5], ic: '🗣️' }, 'A']);
@@ -1692,7 +1835,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   TAG.yn = 'Khống chế'; TAG.mg = 'Triệu hồi'; TAG.jj = 'Tăng trưởng';
   SRC.jball = ['🟣', '#9d4edd'];
   TX.yn = function (v) { return 'Mỗi ' + v[0] + 's tung xúc xắc: ra 3 hoặc 6 thì đối thủ dính Depression (' + v[3] + 's): chậm ' + Math.round(v[1] * 100) + '% và nhận thêm ' + Math.round(v[1] * 100) + '% sát thương, cộng dồn tối đa ' + v[2] + ' lần'; };
-  TX.mg = function (v) { return 'Không có sát thương va chạm; có Megumi thì vòng thu nhỏ chậm thêm 12s. Skill 1 Hắc Bạch Cẩu: mỗi ' + v[0] + 's triệu hồi 1 sói (to 110%, va chạm 15, mỗi 5s hú làm choáng 2s kẻ địch và đồng minh của chúng; tối đa 1 con). Dưới ' + v[1] + ' máu: sói biến mất, chuyển Skill 2 Lôi Ưng: mỗi 3s tạo 1 ưng (to 75%, mỗi 3s bắn tia điện 7 sát thương, tối đa 2 con, không va chạm). Khi máu chạm ' + v[2] + ' hóa Mahogara: 300 máu, x1.8 sát thương va chạm, to 150%, mỗi lần dính va chạm kích hoạt Thích Nghi 4s (giảm 30% → 60% → 90% mọi sát thương, tối đa 3 lần)'; };
+  TX.mg = function (v) { return 'Không có sát thương va chạm; có Megumi thì vòng thu nhỏ chậm thêm 12s. Skill 1 Hắc Bạch Cẩu: mỗi ' + v[0] + 's triệu hồi 1 sói (to 110%, va chạm 15, mỗi 5s hú làm choáng 2s kẻ địch và đồng minh của chúng; tối đa 1 con). Dưới ' + v[1] + ' máu: sói biến mất, chuyển Skill 2 Lôi Ưng: mỗi 3s tạo 1 ưng (to 75%, mỗi 3s bắn tia điện 7 sát thương, tối đa 2 con, không va chạm). Khi máu hiển thị đúng ' + v[2] + ' (bị trừ nhảy qua mốc này thì không kích hoạt) hóa Mahogara: 300 máu, x1.8 sát thương va chạm, to 150%, mỗi lần dính va chạm kích hoạt Thích Nghi 4s (giảm 30% → 60% → 90% mọi sát thương, tối đa 3 lần)'; };
   TX.jj = function (v) { return 'Bình thường cho đến khi chạm chiêu lửa/nhiệt độ (lửa, dung nham, băng lạnh) thì hóa Tà Nhãn: +' + v[0] + ' máu tối đa, tốc độ x' + v[1] + ', to x' + v[2] + '. Mỗi ' + v[3] + 's vận ' + v[4] + 's rồi đá quả bóng bị nguyền (tím, bay nhanh, nảy tường 1 lần) ' + v[5] + ' sát thương. Gặp Ayase: Ayase có thêm đồng minh Okarun x1.1 sức mạnh'; };
   SFXS.dice = function () { [0, 1, 2, 3].forEach(function (i) { noise(0.05, 0.12, 2800 + i * 300, 'bandpass', 2, 0.5, i * 0.07); }); tone(660, 0.08, 'square', 0.05, 0.8, 0.3); };
   SFXS.depress = function () { tone(220, 0.7, 'sine', 0.15, 0.5); tone(165, 0.8, 'triangle', 0.1, 0.5, 0.1); };
@@ -1722,10 +1865,13 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   }
   function drawParts(c, B) {
     var fx = B.fx, g = {}, i, f, pl, key, a, k, q, j, s, an, ca, sa, x, y;
-    for (i = 0; i < fx.length; i++) { f = fx[i]; if (!f.p) continue; pl = 1 - f.t / f.life; if (pl <= 0) continue; key = (f.kd || 'r') + Math.ceil(pl * 3) + f.c; (g[key] || (g[key] = [])).push(f); }
+    for (i = 0; i < fx.length; i++) { f = fx[i]; if (!f.p) continue; pl = 1 - f.t / f.life; if (pl <= 0) continue; key = (f.kd || 'r') + Math.ceil(pl * 2) + f.c; (g[key] || (g[key] = [])).push(f); }
     for (key in g) {
-      a = g[key]; k = key.charAt(0); q = +key.charAt(1) / 3; c.beginPath();
-      if (k === 's') {
+      a = g[key]; k = key.charAt(0); q = +key.charAt(1) / 2; c.beginPath();
+      if (k === 'o') {
+        c.strokeStyle = soft(a[0].c); c.lineWidth = 1.6; c.globalAlpha = q * 0.9;
+        for (j = 0; j < a.length; j++) { f = a[j]; s = f.sz * (1 + (1 - f.t / f.life) * 0.5) * 1.4; c.moveTo(f.x + s, f.y); c.arc(f.x, f.y, s, 0, 6.2832); } c.stroke();
+      } else if (k === 's') {
         c.strokeStyle = '#f3e6c4'; c.lineWidth = 2; c.globalAlpha = q;
         for (j = 0; j < a.length; j++) { f = a[j]; c.moveTo(f.x, f.y); c.lineTo(f.x - f.vx * 0.045, f.y - f.vy * 0.045); } c.stroke();
       } else {
@@ -1733,12 +1879,139 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         for (j = 0; j < a.length; j++) {
           f = a[j]; s = Math.max(0.6, f.sz * (0.4 + (1 - f.t / f.life) * 0.6)); x = f.x; y = f.y;
           if (k === 'c') { an = f.rt + f.rs * f.t; ca = Math.cos(an) * s; sa = Math.sin(an) * s; c.moveTo(x + ca - sa, y + sa + ca); c.lineTo(x - ca - sa, y - sa + ca); c.lineTo(x - ca + sa, y - sa - ca); c.lineTo(x + ca + sa, y + sa - ca); c.closePath(); }
+          else if (k === 'q') c.rect(x - s, y - s, s * 2, s * 2);
           else { if (k === 'd') s = f.sz * (1 + f.t / f.life * 1.3); c.moveTo(x + s, y); c.arc(x, y, s, 0, 6.2832); }
         }
         c.fill();
       }
     }
     c.globalAlpha = 1;
+  }
+
+  /* ================= Theme riêng từng ball + SFX riêng từng kỹ năng ================= */
+  /* THEME: tên → [kiểu hạt, trọng lực (âm = bay lên), số hạt/giây, cỡ hạt, bảng màu, kiểu viền]
+     kiểu hạt: r chấm · c mảnh xoay · d bụi khói · s tia · q điểm ảnh vuông · o bong bóng rỗng */
+  var THEME = {
+    'Shackles': ['c', 120, 3, 3, ['#8d99ae', '#adb5bd', '#6c757d'], 'dots'], 'Spider': ['s', 30, 3, 3, ['#e9ecef', '#adb5bd'], 'spk'],
+    'Laser': ['s', 0, 5, 3, ['#ff4d6d', '#ff8fa3'], 'dash'], 'Vampire': ['r', 260, 3, 3, ['#9b1d20', '#c1121f', '#6a040f'], 'spk'],
+    'Conductor': ['s', 0, 6, 3, ['#ffd60a', '#fff3b0'], 'dash'], 'Zone': ['d', -20, 4, 3, ['#e5383b', '#b23a48'], 'dbl'],
+    'Glass': ['c', 60, 4, 3, ['#a8dadc', '#e0fbfc', '#48cae4'], 'dbl'], 'Dice': ['q', 150, 3, 3, ['#f1f1f1', '#e76f51', '#2b2d42'], 'dots'],
+    'Hive': ['r', -40, 4, 2.5, ['#f4a261', '#ffd166', '#3a3a3a'], 'dots'], 'Thief': ['d', -20, 3, 3, ['#6c757d', '#343a40', '#adb5bd'], 'dash'],
+    'Snake': ['c', 40, 3, 3, ['#52b788', '#2d6a4f', '#95d5b2'], 'dash'], 'Electric': ['s', 0, 7, 3, ['#ffee32', '#a2d2ff', '#ffffff'], 'spk'],
+    'Cannon': ['d', -15, 3, 3.5, ['#495057', '#6c757d', '#ffb703'], 'solid'], 'Ice Cone': ['r', 40, 4, 2.5, ['#90e0ef', '#caf0f8', '#ffffff'], 'dots'],
+    'Bomb': ['r', -60, 4, 2.5, ['#fb5607', '#ffbe0b', '#adb5bd'], 'spk'], 'Harpoon': ['o', -50, 3, 3, ['#4895ef', '#a2d2ff'], 'dash'],
+    'Viruss': ['o', -30, 4, 3, ['#80b918', '#b5e48c', '#aacc00'], 'dots'], 'Thukuna': ['s', 0, 5, 3, ['#c1121f', '#ff9f1c', '#2b2d42'], 'spk'],
+    'Beam': ['s', 0, 4, 3, ['#e0aaff', '#c77dff', '#ffffff'], 'dbl'], 'Axe': ['c', 200, 3, 3, ['#b5651d', '#8a5a2b', '#d4a373'], 'solid'],
+    'Apple': ['c', 60, 3, 3, ['#e63946', '#ff758f', '#6a994e'], 'dots'], 'Frost': ['r', 50, 6, 2.5, ['#bde0fe', '#ffffff', '#a2d2ff'], 'spk'],
+    'Blade': ['s', 0, 4, 3, ['#adb5bd', '#dee2e6', '#ffffff'], 'dash'], 'Big Spike': ['c', 150, 3, 3, ['#8d6e63', '#6d4c41', '#b08968'], 'spk'],
+    'Reforge': ['s', 200, 5, 3, ['#ff7b00', '#ffbe0b', '#ff4d00'], 'solid'], 'Bow': ['c', 40, 3, 3, ['#cfa86a', '#e9d8a6', '#a98467'], 'dash'],
+    'Electro King': ['s', 0, 6, 3, ['#f9c74f', '#fff3b0', '#90e0ef'], 'dbl'], 'Fibonacci': ['o', -20, 3, 3, ['#ffb703', '#ffd166', '#e9c46a'], 'dbl'],
+    'Burst': ['d', -20, 5, 3, ['#ff6d00', '#ffd166', '#6c757d'], 'dash'], 'Fighter': ['d', 0, 3, 3.5, ['#9ca3af', '#6b7280', '#d1d5db'], 'solid'],
+    'Charge': ['s', 0, 5, 3, ['#a78bfa', '#c4b5fd', '#ffffff'], 'dbl'], 'Chess': ['q', 100, 3, 3, ['#e9ecef', '#2b2d42', '#adb5bd'], 'solid'],
+    'Saitama Lỗi': ['q', 0, 4, 3, ['#ced4da', '#ffd60a', '#e63946'], 'dash'], 'Cell': ['o', -30, 3, 3, ['#52b788', '#95d5b2'], 'dots'],
+    'Verity': ['o', -25, 3, 3, ['#9d4edd', '#c77dff', '#ffd6ff'], 'dbl'], 'Potion': ['o', -60, 5, 3, ['#b5179e', '#7209b7', '#f72585', '#4cc9f0'], 'dots'],
+    'Machine Gun': ['c', 300, 5, 2.5, ['#ffb703', '#d4a017', '#343a40'], 'solid'], 'Light Yagami': ['c', 40, 3, 3, ['#f1f1f1', '#4a4e69', '#c9ada7'], 'dash'],
+    'Nuke': ['d', -20, 5, 3.5, ['#c6ff00', '#9ef01a', '#495057'], 'spk'], 'Jogo': ['r', -90, 6, 2.5, ['#ff4500', '#ff8c00', '#ffd166', '#3d2c2e'], 'spk'],
+    'Yuta Okkotsu': ['o', -30, 3, 3, ['#8ecae6', '#bde0fe', '#ffffff'], 'dbl'], 'Berserk': ['d', -40, 4, 3.5, ['#9b2226', '#6a040f', '#2b2d42'], 'spk'],
+    'Priest': ['r', -50, 4, 2.5, ['#f1faee', '#ffe66d', '#ffffff'], 'dbl'], 'Princess': ['c', 50, 4, 3, ['#ff8fab', '#ffc2d1', '#fff0f3'], 'dots'],
+    'LilDragon': ['r', -70, 5, 2.5, ['#ff7f11', '#ffbe0b', '#d00000'], 'spk'], 'BabyBoo': ['o', -30, 4, 3, ['#ffafcc', '#bde0fe', '#ffc8dd'], 'dots'],
+    'Consume': ['d', -20, 4, 3.5, ['#9d8df1', '#5a189a', '#240046'], 'dbl'], 'Bum': ['q', 120, 3, 3, ['#ffd166', '#ffe29a', '#e0a100'], 'dots'],
+    'Poseidon': ['o', -60, 5, 3, ['#00b4d8', '#90e0ef', '#caf0f8'], 'dash'], 'Blood Demon': ['r', 280, 4, 2.5, ['#8b1e2d', '#c1121f', '#4a0a14'], 'spk'],
+    'Teacher': ['d', 30, 3, 3, ['#f1f1f1', '#e6c872', '#2a9d8f'], 'dots'], 'Gộ': ['o', -30, 4, 3, ['#7fb8d8', '#a2d2ff', '#c77dff'], 'dbl'],
+    'Ayase': ['d', -40, 4, 3.5, ['#a99bd6', '#e2d6ff', '#ffffff'], 'dbl'], 'Okarun': ['s', 0, 5, 3, ['#f0b323', '#e07a5f', '#81b29a'], 'spk'],
+    'Makima': ['o', -20, 4, 3, ['#d62828', '#f77f00', '#ffd6a5'], 'dbl'], 'Nobita': ['q', 60, 3, 3, ['#4f8fe0', '#ffd166', '#ffffff'], 'dots'],
+    'Steve': ['q', 120, 6, 3, ['#2ec4b6', '#6a994e', '#8d6e63'], 'solid'], 'Inumaki': ['o', -25, 4, 3, ['#a3c4bc', '#bfd8d2', '#f1faee'], 'dbl'],
+    'YuhtNa': ['q', 80, 4, 3, ['#8d99ae', '#5a4f8a', '#f1f1f1'], 'dots'], 'Megumi': ['s', 0, 5, 3, ['#ffd60a', '#2b4c7e', '#9bb1ff'], 'spk'], 'Jiji': ['o', -30, 4, 3, ['#9d4edd', '#7b6d8d', '#5a189a'], 'dbl']
+  };
+  function thP(B, th, x, y, mul) {
+    var a = rr(0, 6.2832), v = rr(20, 60) * mul;
+    B.fx.push({ t: 0, x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v + (th[1] < 0 ? -25 : 0), c: th[4][Math.floor(rnd() * th[4].length)], kd: th[0], life: rr(0.6, 1.2), sz: th[3] * rr(0.7, 1.3), g: th[1], p: 1, rt: rr(0, 6.28), rs: rr(-6, 6) });
+  }
+  function themeAmb(B, p, u, dt) {   /* hạt "khí chất" bay quanh ball khi đang đấu */
+    var th = THEME[p.ball[0]], n = 0; if (!th) return;
+    u.tha = (u.tha || 0) + dt * th[2];
+    while (u.tha >= 1 && n < 2) { u.tha -= 1; n++; thP(B, th, u.x + rr(-1, 1) * u.r, u.y + rr(-1, 1) * u.r * 0.9, 1); }
+    if (u.tha > 3) u.tha = 0;
+  }
+  function thBurst(B, k, x, y, n) { var th = THEME[B.P[k].ball[0]], i; if (th) for (i = 0; i < n; i++) thP(B, th, x, y, 5); }
+  var RIMC = {};
+  function rimPath(st, R) {   /* dựng sẵn hình viền chấm/gai một lần rồi dùng lại: chỉ xoay + tô nên rất nhẹ */
+    var key = st + R; if (RIMC[key]) return RIMC[key];
+    var pa = new Path2D(), k, a, n = st === 'dots' ? 14 : 12;
+    for (k = 0; k < n; k++) {
+      if (st === 'dots') { a = k * 6.2832 / n; pa.moveTo(Math.cos(a) * (R + 3) + 3.2, Math.sin(a) * (R + 3)); pa.arc(Math.cos(a) * (R + 3), Math.sin(a) * (R + 3), 3.2, 0, 6.2832); }
+      else { a = k * 0.5236; pa.moveTo(Math.cos(a - 0.12) * (R + 1), Math.sin(a - 0.12) * (R + 1)); pa.lineTo(Math.cos(a) * (R + 11), Math.sin(a) * (R + 11)); pa.lineTo(Math.cos(a + 0.12) * (R + 1), Math.sin(a + 0.12) * (R + 1)); }
+    }
+    return (RIMC[key] = pa);
+  }
+  function drawRim(c, p, u, R, T) {
+    var th = THEME[p.ball[0]], st = th ? th[5] : 'solid', col = soft(p.ball[1]);
+    c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 5;
+    if (st === 'dbl') { c.lineWidth = 2.5; c.beginPath(); c.arc(u.x, u.y, R + 1, 0, 6.2832); c.moveTo(u.x + R + 6, u.y); c.arc(u.x, u.y, R + 6, 0, 6.2832); c.stroke(); }
+    else if (st === 'dots' || st === 'spk') {
+      c.save(); c.translate(u.x, u.y); c.rotate(T * (st === 'dots' ? 0.4 : 0.3)); c.fill(rimPath(st, Math.round(R / 2) * 2)); c.restore();
+      if (st === 'spk') { c.lineWidth = 3; c.beginPath(); c.arc(u.x, u.y, R + 1, 0, 6.2832); c.stroke(); }
+    } else { if (st === 'dash') { c.setLineDash([9, 7]); c.lineDashOffset = -T * 20; } c.beginPath(); c.arc(u.x, u.y, R + 2, 0, 6.2832); c.stroke(); if (st === 'dash') c.setLineDash([]); }
+  }
+
+  /* SFX thiết kế riêng cho từng kỹ năng: 'Ball|khóa kỹ năng' → chuỗi lớp âm.
+     t,tần số,dài,sóng(s/t/q/w),âm lượng,trượt,trễ,rung  ·  n,dài,âm lượng,tần số lọc,lọc(l/h/b),Q,quét,trễ  ·  tần số "*k" = k lần cao độ riêng của ball */
+  var WV = { s: 'sine', t: 'triangle', q: 'square', w: 'sawtooth' }, FT = { l: 'lowpass', h: 'highpass', b: 'bandpass' };
+  function play(rec, f0) {
+    rec.split(';').forEach(function (L) {
+      var a = L.split(',');
+      if (a[0] === 't') tone(a[1].charAt(0) === '*' ? f0 * a[1].slice(1) : +a[1], +a[2], WV[a[3]], +a[4], +a[5], +a[6], undefined, +a[7] || 0);
+      else noise(+a[1], +a[2], +a[3], FT[a[4]], +a[5], +a[6], +a[7]);
+    });
+  }
+  var SK = {
+    'Shackles|rt': 't,1800,.04,q,.05,.5;t,1300,.05,q,.05,.5,.05;t,1800,.04,q,.05,.5,.1;t,80,.35,s,.22,.6,.14;n,.12,.16,900,b,2,.4,.14',
+    'Zone|dr': 't,70,.5,s,.2,.5;n,.4,.12,300,l,1,.4;t,140,.35,t,.08,2,.1,6',
+    'Ice Cone|dr': 't,2400,.08,s,.07,.5;t,3200,.1,s,.05,.5,.05;n,.2,.1,7000,h,1,.5;t,500,.25,t,.07,.6,.06',
+    'Frost|dr': 'n,.3,.1,5000,h,1,.3;t,1800,.15,s,.06,1.4,0,8;t,2700,.18,s,.05,1.3,.05,8',
+    'Glass|sh': 't,3000,.06,t,.08,.5;t,4500,.1,s,.05,.6,.03;n,.12,.1,8000,h,1,.5,.02;t,1500,.12,s,.06,.5,.05',
+    'Hive|sh': 't,320,.28,q,.05,1.05,0,38;t,480,.26,q,.04,1.05,0,52;n,.25,.05,2600,b,4,1',
+    'Thief|sh': 'n,.1,.14,4500,h,1,.3;t,1400,.07,w,.07,.4;t,2200,.05,s,.04,.4,.04',
+    'Cannon|sh': 't,60,.35,s,.3,.4;n,.35,.28,700,l,1,.2;t,200,.2,q,.08,.4,.02',
+    'Apple|hl': 't,660,.12,s,.09,1.5;t,990,.14,s,.08,1.4,.08;t,1320,.2,s,.07,1.2,.16',
+    'Apple|sh': 'n,.06,.1,2500,b,2,.5;t,520,.1,t,.09,1.8;t,320,.1,s,.08,.6,.05',
+    'Bow|sh': 't,150,.09,q,.1,.4;n,.18,.12,3200,b,2,.4,.03;t,900,.14,t,.05,.5,.05',
+    'Machine Gun|sh': 'n,.04,.2,3500,b,1,.5;t,130,.05,q,.12,.5;t,2800,.02,s,.04,.5,.01',
+    'Electric|bolt': 'n,.2,.16,6000,h,1,.3;t,1900,.14,w,.09,.2;t,110,.2,q,.1,.5,.03;t,3800,.06,s,.05,.4,.1',
+    'Electro King|bolt': 'n,.25,.16,5000,h,1,.3;t,880,.4,w,.09,.25,0,14;t,1760,.35,q,.06,.3,.03;t,70,.3,s,.16,.5,.05',
+    'Bomb|bomb': 'n,.4,.1,5000,h,1,.3;t,1200,.3,q,.03,.5,0,20;t,200,.12,s,.1,.5,.05',
+    'Harpoon|pl': 'n,.18,.14,3000,b,2,.4;t,1100,.09,w,.07,.4;t,80,.22,s,.16,.5,.12',
+    'Thukuna|dom': 't,55,.9,s,.3,.9;t,110,.7,w,.1,.5;n,.9,.2,500,l,1,.3;t,440,.5,t,.07,.5,.05,3',
+    'Beam|bm': 't,220,.6,w,.08,3,0,5;t,880,.6,s,.07,2,.05;n,.5,.08,2000,b,2,3',
+    'Laser|lz': 't,1500,.35,w,.08,.25;t,300,.35,q,.06,2.5;n,.2,.07,6000,h,1,.5',
+    'Spider|w': 'n,.15,.08,5000,h,1,.5;t,1800,.12,t,.05,1.5,0,10;t,1200,.15,s,.04,1.6,.05',
+    'Burst|bs': 'n,.3,.16,500,b,1.5,5;t,150,.3,w,.1,3;t,700,.2,s,.06,2,.05',
+    'Chess|cs': 't,1500,.04,q,.07,.7;t,1900,.04,q,.07,.7,.06;t,520,.18,t,.1,.6,.12;t,260,.3,s,.1,.5,.16',
+    'Potion|pot': 't,300,.25,s,.1,2.4;t,420,.22,s,.08,2.2,.05;n,.2,.08,2500,b,2,1.5,.06;t,1200,.08,s,.05,.6,.2',
+    'Jogo|vol': 't,50,.9,s,.3,.5;n,.8,.25,400,l,1,.3;t,120,.7,w,.1,.6,.1,7;n,.4,.12,1800,b,1,.5,.3',
+    'Priest|pr': 't,523,.4,s,.09,1.01;t,659,.4,s,.07,1.01,.05;t,784,.5,s,.07,1.01,.1',
+    'Princess|kn': 't,392,.12,t,.1,1.3;t,523,.12,t,.1,1.3,.1;t,659,.2,t,.1,1.2,.2;t,196,.3,s,.1,.6,.1',
+    'LilDragon|fire': 'n,.55,.22,900,b,1,.4;t,90,.5,w,.08,.6,0,9;t,400,.3,q,.04,.5,.05',
+    'BabyBoo|boo': 't,700,.07,s,.1,1.6;t,950,.08,s,.1,1.4,.09;t,1250,.09,s,.1,1.3,.18;t,1600,.14,s,.09,1.2,.27',
+    'Poseidon|tsu': 'n,1,.24,350,l,1,5;t,70,.9,s,.2,.6;t,140,.7,t,.07,.8,.2,3',
+    'Poseidon|fsh': 'n,.2,.14,2200,b,2,.5;t,500,.14,s,.1,2;t,800,.1,s,.08,.5,.1'
+  };
+  /* âm va chạm: chọn theo kỹ năng va chạm của ball (cắn, giật điện, đập, độc…), không có thì theo chất liệu hạt của theme */
+  var HIT = {
+    bite: 't,*1.6,.05,w,.07,.5;t,*3,.04,q,.05,.6,.03;n,.06,.08,3000,b,3,.5', zap: 'n,.08,.14,6500,h,1,.4;t,*5,.06,w,.06,.3;t,*2,.1,q,.05,.5,.02',
+    thump: 't,*.5,.18,s,.2,.5;n,.1,.16,500,l,1,.3', hiss: 'n,.18,.09,3500,b,1.5,1.5;t,*3,.1,w,.03,1.4', slam: 't,*.35,.25,s,.28,.4;n,.14,.2,900,l,1,.3;t,*1,.1,q,.06,.5,.04',
+    rise: 't,*1.2,.08,t,.07,1.6;t,*2.4,.07,s,.04,1.6,.03', dice: 't,*3,.03,q,.06,.7;t,*3.7,.03,q,.06,.7,.04;t,*2.6,.03,q,.06,.7,.08;n,.05,.07,5000,h,1,.5,.01',
+    clink: 't,*3.4,.07,t,.07,.8;t,*5.1,.05,s,.04,.8,.02;n,.03,.06,6000,h,1,.5', soft: 't,*.9,.1,s,.1,.5;n,.07,.08,700,l,1,.4', pop: 't,*2.5,.07,s,.08,1.8;t,*4,.04,s,.04,1.5,.03',
+    blip: 't,*1.5,.07,q,.07,.8;t,*2,.05,q,.05,.6,.05', pix: 't,*2,.04,q,.07,1.5;t,*3,.05,q,.06,1,.04', streak: 'n,.07,.12,5500,h,1,.5;t,*4,.05,s,.05,.4'
+  }, HITKD = { c: 'clink', d: 'soft', o: 'pop', r: 'blip', q: 'pix', s: 'streak' };
+  function hitVoice(u, s) {
+    var p = BVB.P[0].b === u ? BVB.P[0] : BVB.P[1], c = p.cf, th = THEME[p.ball[0]];
+    var k = c.ls || c.hold ? 'bite' : c.st ? 'zap' : c.kb || c.bomb ? 'thump' : c.dot || c.horn ? 'hiss' : c.ch ? 'slam' : c.gr ? 'rise' : c.rn ? 'dice' : HITKD[th ? th[0] : 'r'];
+    play(HIT[k], s.f * (k === 'rise' ? Math.min(2.5, u.dm) : 1));
+  }
+  function skill(u, k) {   /* kỹ năng không chạy theo hồi chiêu (vd. bẫy khi chạm tường) */
+    if (!SFX_ON || !AC) return; var rc = SK[u.vn + '|' + k], t = performance.now(); if (!rc || t - (u['q' + k] || 0) < 130) return; u['q' + k] = t; VQ = t; curPan = 0;
+    try { play(rc, vsig(u.vn).f); } catch (e) {}
   }
 
   /* --- vật phẩm (8s một cái) --- */
@@ -1888,6 +2161,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     }
     function stepUnit(i) {
       var p = P[i], u = p.b, c = p.cf, j = 1 - i, o = P[j].b, oc = P[j].cf, R, f, dx, dy, d, hit;
+      themeAmb(B, p, u, dt);
       u.r = BR * (u.msz || 1) * (c.vt && u.hp < u.mx * 0.2 ? 1.35 : 1) * (c.ok && u.okd ? c.ok[4] : 1) * (u.mhg ? 1.5 : 1) * (c.jj && u.ev ? c.jj[2] : 1); R = u.r;
       if (c.ok && !u.okd && T >= c.ok[0] && T >= u.frz) okTransform(i);
       if (c.ln && !u.lnd && T >= c.ln[0] && T >= u.frz) {
@@ -1926,7 +2200,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         var s = Math.hypot(u.vx, u.vy) || 1, sp = 250 * (c.sp || 1) * f * (T < u.slT ? u.slM : 1) * (c.ok && u.okd ? c.ok[2] : 1) * (c.jj && u.ev ? c.jj[1] : 1) * (T < u.depT ? 1 - u.depM * u.dep : 1), m = 1 + (sp / s - 1) * Math.min(1, dt * 2.5);
         u.vx *= m; u.vy *= m; u.x += u.vx * dt; u.y += u.vy * dt;
         hit = bounce(u, lo, hi); if (hit) burst(u.x, u.y, '#ffffff', 3, 140, { g: 0, life: 0.5 });
-        if (hit && c.w && T > u.wcd) { u.wcd = T + 0.9; addHaz(i, u.x, u.y, c.w[2], c.w[0], c.w[1], p.ball[1], { web: c.web, ic: '🕸️' }); }
+        if (hit && c.w && T > u.wcd) { u.wcd = T + 0.9; skill(u, 'w'); addHaz(i, u.x, u.y, c.w[2], c.w[0], c.w[1], p.ball[1], { web: c.web, ic: '🕸️' }); }
       }
       u.x = Math.max(lo + R, Math.min(hi - R, u.x)); u.y = Math.max(lo + R, Math.min(hi - R, u.y));
       if (u.swl > 0) { var cu = P[u.swo].b; u.swl -= dt; u.x += (cu.x - u.x) * Math.min(1, dt * 6); u.y += (cu.y - u.y) * Math.min(1, dt * 6); if (u.swl <= 0) hurt(i, 99999, 'nuke'); }
@@ -2400,7 +2674,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   function shakeFx(v) { BVB.shake = Math.max(BVB.shake || 0, v); }
   function hitFx(u, src, n) {
     var B = BVB, s = SRC[src] || SRC.hit, big = src === 'hit' || n > 12;
-    burst(u.x, u.y, s[1], big ? 12 : 5, big ? 340 : 220);
+    burst(u.x, u.y, s[1], big ? 12 : 5, big ? 340 : 220); thBurst(B, B.P[0].b === u ? 1 : 0, u.x, u.y, big ? 7 : 3);
     if (big) { shakeFx(Math.min(0.35, 0.12 + n / 80)); B.hs = Math.max(B.hs || 0, 0.04); B.fx.push({ t: 0, rg: 1, x: u.x, y: u.y, c: s[1], r0: u.r, r1: u.r + 50, life: 0.35 }); }
   }
   function fishHit(q, od, o) {
@@ -2428,7 +2702,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     if (B.T < u.depT) n *= 1 + u.depM * u.dep;
     if (src === 'fire' && c.jj && !u.ev) jijiEvil(i);
     if (c.mg) {
-      if (!u.mhg && u.hp - n <= c.mg[2]) { becomeMahogara(i); return; }
+      if (!u.mhg && Math.ceil(u.hp - n) === c.mg[2]) { becomeMahogara(i); return; }
       if (u.mhg) {
         n *= 1 - (B.T < u.adT ? [0, 0.3, 0.6, 0.9][u.adL] : 0);
         if (src === 'hit') { u.adL = B.T < u.adT ? Math.min(3, u.adL + 1) : 1; u.adT = B.T + 4; B.fx.push({ t: 0, x: u.x, y: u.y - u.r - 8, v: '☸️ Thích Nghi ' + [0, 30, 60, 90][u.adL] + '%', c: '#ffd60a' }); sfx('shield'); }
@@ -2602,7 +2876,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         if (u.cs) { var pc2 = u.cs; c.save(); c.strokeStyle = 'rgba(233,236,239,.9)'; c.lineWidth = 7; c.setLineDash([14, 10]); c.lineCap = 'round'; c.beginPath(); c.moveTo(pc2.t > 0 ? pc2.x0 : u.x, pc2.t > 0 ? pc2.y0 : u.y); for (k = pc2.k; k < pc2.p.length; k++) c.lineTo(pc2.p[k][0], pc2.p[k][1]); c.stroke(); c.setLineDash([]); var pe = pc2.p[pc2.p.length - 1]; c.font = '48px ' + B.ff; c.textAlign = 'center'; c.globalAlpha = 0.55 + 0.4 * Math.sin(B.T * 14); c.fillText(CHESS[pc2.pi], pe[0], pe[1]); c.restore(); }
         if (u.swl > 0) R = R * Math.max(0.15, u.swl / 0.7);
         c.drawImage(B.sp[i], u.x - R, u.y - R, 2 * R, 2 * R);
-        c.strokeStyle = soft(p.ball[1]); c.lineWidth = 5; c.beginPath(); c.arc(u.x, u.y, R + 2, 0, 6.2832); c.stroke();
+        drawRim(c, p, u, R, B.T);
         c.strokeStyle = i ? '#ef476f' : '#3a86ff'; c.lineWidth = 2; c.beginPath(); c.arc(u.x, u.y, R + 6, 0, 6.2832); c.stroke();
         if (u.flash > 0) { c.fillStyle = 'rgba(255,60,60,' + u.flash * 3 + ')'; c.beginPath(); c.arc(u.x, u.y, R + 2, 0, 6.2832); c.fill(); }
         drawUnitFx(c, B, p, i);
