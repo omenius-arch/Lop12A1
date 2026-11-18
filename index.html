@@ -498,6 +498,16 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
 :is(.dc, .pcard, .pc-ball)[data-ball="g-"] i, .pv-detail[data-ball="g-"] .dh i { animation: thg 1.8s ease-in-out infinite; }
 :is(.dc, .pcard, .pc-ball)[data-ball="ayase"] i, .pv-detail[data-ball="ayase"] .dh i { animation: thf 2.4s ease-in-out infinite; }
 }
+
+/* ---- mô tả kỹ năng 2 tầng ---- */
+.abl li > div { min-width: 0; flex: 1; } .abl .hd { display: block; font-weight: 600; line-height: 1.3; }
+.abl .sub { list-style: none; margin: 5px 0 0; padding: 0; display: grid; gap: 4px; }
+.abl .sub li { display: block; font-size: 12px; line-height: 1.35; padding-left: 9px; border-left: 2px solid var(--line); opacity: .88; }
+.abl .sub li b { font-weight: 600; margin-right: 6px; }
+.abl .sub li b::after { content: ' ·'; opacity: .5; }
+
+/* chế độ chọn người, ball random: ẩn phần chọn sức mạnh */
+#cm.cm-rb .cmb { display: none; }
 </style>
 
 <div class="wrap">
@@ -514,6 +524,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
       <button class="btn" id="bungee-open" type="button">Bungee</button>
       <button class="btn" id="bvb-open" type="button">Ball vs Ball</button>
       <button class="btn" id="cm-open" type="button">Tự chọn trận</button>
+      <button class="btn" id="cm-open2" type="button">Chọn người · ball random</button>
       <button class="btn" id="pv-open" type="button">Bảng sức mạnh</button>
       <button class="btn" id="add" type="button">Thêm bạn</button>
       <button class="btn primary" id="export" type="button">Xuất seats.js</button>
@@ -596,8 +607,8 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   <div class="sheet wide" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
     <h3 id="cmTitle">Trận tự chọn</h3>
     <div class="cm-cols">
-      <div class="cm-col t0"><label class="fld"><span>Người chơi 1</span><select id="cmS0"></select></label><label class="fld"><span>Sức mạnh</span><select id="cmB0"></select></label><p class="muted" id="cmD0"></p></div>
-      <div class="cm-col t1"><label class="fld"><span>Người chơi 2</span><select id="cmS1"></select></label><label class="fld"><span>Sức mạnh</span><select id="cmB1"></select></label><p class="muted" id="cmD1"></p></div>
+      <div class="cm-col t0"><label class="fld"><span>Người chơi 1</span><select id="cmS0"></select></label><label class="fld cmb"><span>Sức mạnh</span><select id="cmB0"></select></label><p class="muted cmb" id="cmD0"></p></div>
+      <div class="cm-col t1"><label class="fld"><span>Người chơi 2</span><select id="cmS1"></select></label><label class="fld cmb"><span>Sức mạnh</span><select id="cmB1"></select></label><p class="muted cmb" id="cmD1"></p></div>
     </div>
     <div class="acts"><div class="grp"><button class="btn" id="cmRand" type="button">Ngẫu nhiên</button></div><div class="grp"><button class="btn" id="cmCancel" type="button">Hủy</button><button class="btn primary" id="cmGo" type="button">Bắt đầu đấu</button></div></div>
   </div>
@@ -1460,7 +1471,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     ['cs', 'cs', function (c) { return c.cs; }], ['boo', 'boo', function (c) { return c.boo[0]; }], ['bolt', 'bolt', function (c) { return c.bolt[0]; }],
     ['root', 'rt', function (c) { return c.root[0]; }], ['pl', 'pl', function (c) { return c.pl; }], ['bs', 'bs', function (c) { return c.bs; }], ['sh', 'sh', function (c) { return c.sh[0]; }],
     ['dr', 'dr', function (c) { return c.dr[0]; }], ['hl', 'hl', function (c) { return c.hl[0]; }]];
-  function descr(c) { var o = []; ORDER.forEach(function (k) { if (c[k] !== undefined && TX[k]) o.push([ICON[k], TX[k](c[k])]); }); return o; }
+  function descr(c) { var o = []; ORDER.forEach(function (k) { if (c[k] === undefined || !TX[k]) return; if (TXD[k]) { var d = TXD[k](c[k]); o.push([ICON[k], d.h, d.l]); } else o.push([ICON[k], TX[k](c[k])]); }); return o; }
   function ballIcon(b) { if (b[2].ic) return b[2].ic; for (var i = 0; i < ORDER.length; i++) if (b[2][ORDER[i]] !== undefined) return ICON[ORDER[i]]; return '⚪'; }
   function icoHTML(b) { return b[4] ? '<img src="' + b[4] + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.replaceWith(document.createTextNode(\'' + ballIcon(b) + '\'))">' : ballIcon(b); }
   function ballTags(b) { var t = []; ORDER.forEach(function (k) { if (b[2][k] !== undefined && TAG[k] && t.indexOf(TAG[k]) < 0) t.push(TAG[k]); }); return t; }
@@ -1517,12 +1528,12 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     var B = BVB; B.round++; B.phase = 'draft'; B.t = 0; B.T = 0; B.cd = 0; B.haz = []; B.pr = []; B.fx = []; B.bm = []; B.bb = []; B.mn = []; B.vl = []; B.ts = []; B.nuke = null; B.gz = []; B.sm = []; B.ik = []; B.ayOk = 0; B.megX = 0; B.pw = []; B.pwT = 8; B.shake = 0; B.hs = 0; B.dres = 0; B.sec = -1;
     B.P.forEach(function (p, i) {
       p.drafts = shuffled(BALLS).slice(0, 3); p.ball = p.drafts[Math.floor(rnd() * 3)];
-      if (B.cu) { p.ball = BALLS[B.cu.b[i]]; p.drafts = [p.ball]; }
+      if (B.cu && !B.cu.rb) { p.ball = BALLS[B.cu.b[i]]; p.drafts = [p.ball]; }
       mkUnit(p, i);
     });
     $('bvh').hidden = true; bvbLayout();
     var d = $('bvd');
-    d.innerHTML = '<div class="dwrap"><h2>VÒNG ' + B.round + '</h2><p>' + (B.cu ? 'Trận tự chọn: sức mạnh do các bạn chọn' : 'Mỗi bạn bốc ngẫu nhiên 3 bóng, rồi máy chọn 1 bóng để vào trận') + '</p><p class="muted">Cứ 8s có 1 vật phẩm trên sân: 💚 hồi 15 máu · 🛡️ kháng va chạm 1 lần · ⏱️ hồi chiêu -20% trong 6s</p><div class="dcols">' +
+    d.innerHTML = '<div class="dwrap"><h2>VÒNG ' + B.round + '</h2><p>' + (B.cu && !B.cu.rb ? 'Trận tự chọn: sức mạnh do các bạn chọn' : 'Mỗi bạn bốc ngẫu nhiên 3 bóng, rồi máy chọn 1 bóng để vào trận') + '</p><p class="muted">Cứ 8s có 1 vật phẩm trên sân: 💚 hồi 15 máu · 🛡️ kháng va chạm 1 lần · ⏱️ hồi chiêu -20% trong 6s</p><div class="dcols">' +
       B.P.map(function (p, pi) {
         return '<div class="dcol t' + pi + '"><div class="dwho"><img src="' + B.sp[pi].toDataURL() + '" alt=""><b>' + esc(p.s.name) + '</b></div><div class="dcards">' +
           p.drafts.map(function (b, i) { return '<div class="dc" data-p="' + pi + '" data-i="' + i + '" data-ball="' + bslug(b) + '"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><u class="tr ' + b[3] + '">' + b[3] + '</u><b>' + b[0] + '</b><small>' + ballTags(b).join(' · ') + '</small></div>'; }).join('') +
@@ -1532,7 +1543,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   }
   function draftUpdate() {
     var B = BVB, cs = $('bvd').querySelectorAll('.dc');
-    if (!B.cu && B.t < 2.4) {
+    if ((!B.cu || B.cu.rb) && B.t < 2.4) {
       var hi = Math.floor(B.t * 9) % 3; if (hi !== B.dh) { B.dh = hi; sfx('tick'); }
       cs.forEach(function (el) { el.classList.toggle('hot', +el.dataset.i === Math.floor(B.t * 9 + +el.dataset.p * 2) % 3); });
     } else if (!B.dres) {
@@ -1540,7 +1551,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
       cs.forEach(function (el) { var p = B.P[+el.dataset.p], on = p.drafts[+el.dataset.i] === p.ball; el.classList.remove('hot'); el.classList.add(on ? 'win' : 'lose'); });
       $('bvd').querySelectorAll('.dd').forEach(function (el, i) { el.innerHTML = '<b>' + ballIcon(B.P[i].ball) + ' ' + B.P[i].ball[0] + ' Ball</b><div class="chips">' + chips(B.P[i].ball) + '</div>'; });
     }
-    if (B.t > (B.cu ? 3.5 : 6.2)) { sfx('go'); B.phase = 'fight'; B.t = 0; $('bvd').hidden = true; fillHud(); bvbLayout(); $('bvs').textContent = 'Vòng ' + B.round + ' · đang đấu'; }
+    if (B.t > (B.cu && !B.cu.rb ? 3.5 : 6.2)) { sfx('go'); B.phase = 'fight'; B.t = 0; $('bvd').hidden = true; fillHud(); bvbLayout(); $('bvs').textContent = 'Vòng ' + B.round + ' · đang đấu'; }
   }
   function fillHud() {
     var B = BVB, h = $('bvh');
@@ -1629,7 +1640,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     var c = p.cf = p.ball[2], a = (i ? Math.PI : 0) + rr(-0.7, 0.7), mx = 100 * (c.hp || 1);
     p.cp = '';
     p.b = { x: i ? 450 : 150, y: 300 + rr(-80, 80), vx: Math.cos(a) * 250, vy: Math.sin(a) * 250, r: BR, hp: mx, mx: mx, dm: c.dm0 !== undefined ? c.dm0 : 1, st: 0, stCd: 0, rt: 0, dot: 0, dps: 0, dk: 'p', bsT: 0, last: 0, ocd: 0, wcd: 0, wcd2: 0,
-      ang: 0, tm: {}, acc: {}, flash: 0, slT: 0, slM: 1, web: 0, horn: 0, fp: 0, fzt: 0, cdf: 1, hits: 0, bT: 0, bi: 0, lnd: 0, yud: 0, stk: [], tr: [], cs: null, cdh: 0, swl: 0, swo: 0, shd: 0, cdT: 0, infT: 0, infFx: 0, gjn: 0, prp: null, rl: null, fly: null, vn: p.ball[0], frz: 0, cdS: 0, brn: [], brd: 2, chf: 0, okd: 0, dsT: 0, dsH: 0, nba: -1, nbt: 0, nbr: 0, nbf: -9, swd: -1, swgT: -9, dep: 0, depT: 0, depM: 0.15, mhg: 0, mgp: 0, adL: 0, adT: 0, ev: 0, chn: 0 };
+      ang: 0, tm: {}, acc: {}, flash: 0, slT: 0, slM: 1, web: 0, horn: 0, fp: 0, fzt: 0, cdf: 1, hits: 0, bT: 0, bi: 0, lnd: 0, yud: 0, stk: [], tr: [], cs: null, cdh: 0, swl: 0, swo: 0, shd: 0, cdT: 0, infT: 0, infFx: 0, gjn: 0, prp: null, rl: null, fly: null, vn: p.ball[0], frz: 0, cdS: 0, brn: [], brd: 2, chf: 0, okd: 0, dsT: 0, dsH: 0, nba: -1, nbt: 0, nbr: 0, nbf: -9, swd: -1, swgT: -9, dep: 0, depT: 0, depM: 0.15, mhg: 0, mgp: 0, adL: 0, adT: 0, ev: 0, chn: 0, mgT: 0 };
     if (c.nb) p.b.nba = c.nb[0];
   }
   var KNV = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]], KN = KNV.map(function (v) { return Math.atan2(v[1], v[0]); });
@@ -1644,7 +1655,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   BALLS.push(
     ['Blood Demon', '#8b1e2d', { bd: [7, 5, 14, 0.5], ic: '🩸' }, 'A'],
     ['Teacher', '#c9a24a', { rul: [3, 6, 3, 1], ic: '📏' }, 'B'],
-    ['Gộ', '#7fb8d8', { gj: [6, 12, 8, 50, 2, 8.75], inf: [5, 3], ic: '🕶️' }, 'S'],
+    ['Gộ', '#7fb8d8', { gj: [5.5, 12, 8, 50, 2, 8.25], inf: [4.5, 2.5], ic: '🕶️' }, 'S'],
     ['Ayase', '#a99bd6', { ay: [4.5, 11, 2], ic: '👻' }, 'B']);
   ORDER.unshift('bd', 'rul', 'gj', 'inf', 'ay');
   ICON.bd = '🩸'; ICON.rul = '📏'; ICON.gj = '🕶️'; ICON.inf = '♾️'; ICON.ay = '👻';
@@ -1652,7 +1663,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   SRC.needle = ['🩸', '#c1121f']; SRC.ruler = ['📏', '#e9c46a']; SRC.blue = ['🔵', '#4cc9f0']; SRC.red = ['🔴', '#ef233c']; SRC.purple = ['🟣', '#9d4edd']; SRC.hand = ['👻', '#c8b6ff'];
   TX.bd = function (v) { return 'Mỗi ' + v[0] + 's đánh đổi ' + v[1] + ' máu bản thân để bắn 1 kim máu siêu nhanh, tự dí theo đối thủ, xuyên qua người rồi nảy tường tối đa 1 lần để đâm tiếp. Mỗi lần trúng: ' + v[2] + ' sát thương + chảy máu vĩnh viễn ' + v[3] + '/s, cộng dồn'; };
   TX.rul = function (v) { return 'Cầm thước kẻ dài gấp đôi đường kính bóng. Mỗi ' + v[0] + 's vụt 1 hình cung phía trước về hướng đối thủ: ' + v[1] + ' sát thương và đẩy ra xa; nếu đối thủ gần tường (cách ≤ 1 đường kính bóng) dính thêm ' + v[2] + ' sát thương và choáng ' + v[3] + 's'; };
-  TX.gj = function (v) { return 'Mỗi ' + v[0] + 's tung 1 chiêu lần lượt: Xanh (vùng xanh cạnh đối thủ hút vào, ' + v[1] + ' sát thương, chậm 40% trong 5s) rồi Đỏ (quả cầu càng bay xa càng to, ' + v[2] + ' sát thương, đẩy vào tường choáng 3s rồi chậm 20% trong 2s). Sau ' + v[4] + ' lần chu kỳ Xanh-Đỏ thì vận Tím ' + v[5] + 's rồi bắn tia sáng to ~90% bóng, ' + v[3] + ' sát thương'; };
+  TX.gj = function (v) { return 'Mỗi ' + v[0] + 's tung 1 chiêu lần lượt: Xanh (vùng xanh cạnh đối thủ hút vào, ' + v[1] + ' sát thương, chậm 40% trong 4.5s) rồi Đỏ (quả cầu càng bay xa càng to, ' + v[2] + ' sát thương, đẩy vào tường choáng 2.5s rồi chậm 20% trong 1.5s). Sau ' + v[4] + ' lần chu kỳ Xanh-Đỏ thì vận Tím ' + v[5] + 's rồi bắn tia sáng to ~90% bóng, ' + v[3] + ' sát thương'; };
   TX.inf = function (v) { return 'Vô Hạ Hạn: sau mỗi ' + v[0] + 's hồi chiêu bật ' + v[1] + 's không thể bị sát thương hay dính bất kỳ hiệu ứng nào'; };
   TX.ay = function (v) { return 'Mỗi ' + v[0] + 's mọc hai bàn tay ma trong suốt nắm lấy đối thủ rồi ném vào tường: ' + v[1] + ' sát thương và choáng ' + v[2] + 's'; };
   TX.yu = function (v) { return 'Sau ' + v + 's giao tranh hô "Cảm ơn cậu, Rikka", sao chép mọi thứ của đối thủ (năng lực lẫn chỉ số: máu, sát thương gốc, giáp, tốc độ) và mạnh hơn x1.2. Riêng các cơ chế thắng/thua đặc biệt (Nuke, Deathnote, Verity, Consume, Bum) không sao chép được'; };
@@ -1724,7 +1735,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
      5 ball mới: Okarun, Makima, Nobita, Steve, Inumaki (mỗi ball có sfx + hiệu ứng + CSS riêng). */
   BALLS.push(
     ['Okarun', '#f0b323', { ok: [12, 25, 2, 1.3, 0.75, 6, 7], ic: '👺' }, 'A'],
-    ['Makima', '#d62828', { mk: [10, 2, 2, 0.8], ic: '👁️' }, 'S'],
+    ['Makima', '#d62828', { mk: [10, 2, 6, 0.8], ic: '👁️' }, 'S'],
     ['Nobita', '#4f8fe0', { nb: [6, 0.6, 5, 3.5], hp: 0.8, x: -5, ic: '🔫' }, 'B'],
     ['Steve', '#2ec4b6', { sv: 1, ic: '⛏️' }, 'B'],
     ['Inumaki', '#a3c4bc', { ina: [0, 7.5], ic: '🗣️' }, 'A']);
@@ -1789,7 +1800,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
   }
   function becomeMahogara(i) {
     var B = BVB, u = B.P[i].b;
-    u.mhg = 1; u.mx = 300; u.hp = 300; u.dm = 1.8; u.adL = 0; u.adT = 0; B.sm = B.sm.filter(function (z) { return z.par !== u; });
+    u.mhg = 1; u.mgT = 0; u.mx = 300; u.hp = 300; u.dm = 1.8; u.adL = 0; u.adT = 0; B.sm = B.sm.filter(function (z) { return z.par !== u; });
     sfx('mahogara'); shakeFx(0.9); burst(u.x, u.y, '#ffd60a', 40, 560, { sz: 1.4 }); B.fx.push({ t: 0, rg: 1, x: u.x, y: u.y, c: '#ffd60a', r0: 20, r1: 230, life: 0.7 });
     B.fx.push({ t: 0, x: u.x, y: u.y, v: '☸️ MAHOGARA!', c: '#ffd60a', big: 1, huge: 1 }); B.fx.push({ t: 0, x: u.x, y: u.y + 44, v: '300 máu · x1.8 sát thương · to x1.5', c: '#e9ecef', big: 1 });
   }
@@ -1829,14 +1840,90 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     ['YuhtNa', '#8d99ae', { yn: [5, 0.15, 3, 8], ic: '🎲' }, 'B'],
     ['Megumi', '#2b4c7e', { mg: [5.5, 75, 12], dm0: 0, ic: '🐺' }, 'S'],
     ['Jiji', '#7b6d8d', { jj: [10, 1.5, 1.2, 5, 3, 9], ic: '🧿' }, 'C']);
-  var WOLF = ['Hắc Bạch Cẩu', '#33415c', { hp: 0.6, x: 3, dm0: 1, hw: [5, 2], ic: '🐺' }, 'A'], EAGLE = ['Lôi Ưng', '#ffd60a', { hp: 0.4, dm0: 0, eg: [3, 7], ic: '🦅' }, 'A'];
+  var WOLF = ['Hắc Bạch Cẩu', '#33415c', { hp: 0.6, x: 3, dm0: 1, hw: [5, 2], chs: 3.2, ic: '🐺' }, 'A'], EAGLE = ['Lôi Ưng', '#ffd60a', { hp: 0.4, dm0: 0, eg: [3, 7], ic: '🦅' }, 'A'];
   ORDER.unshift('yn', 'mg', 'jj');
   ICON.yn = '🎲'; ICON.mg = '🐺'; ICON.jj = '🧿';
   TAG.yn = 'Khống chế'; TAG.mg = 'Triệu hồi'; TAG.jj = 'Tăng trưởng';
   SRC.jball = ['🟣', '#9d4edd'];
   TX.yn = function (v) { return 'Mỗi ' + v[0] + 's tung xúc xắc: ra 3 hoặc 6 thì đối thủ dính Depression (' + v[3] + 's): chậm ' + Math.round(v[1] * 100) + '% và nhận thêm ' + Math.round(v[1] * 100) + '% sát thương, cộng dồn tối đa ' + v[2] + ' lần'; };
-  TX.mg = function (v) { return 'Không có sát thương va chạm; có Megumi thì vòng thu nhỏ chậm thêm 12s. Skill 1 Hắc Bạch Cẩu: mỗi ' + v[0] + 's triệu hồi 1 sói (to 110%, va chạm 15, mỗi 5s hú làm choáng 2s kẻ địch và đồng minh của chúng; tối đa 1 con). Dưới ' + v[1] + ' máu: sói biến mất, chuyển Skill 2 Lôi Ưng: mỗi 3s tạo 1 ưng (to 75%, mỗi 3s bắn tia điện 7 sát thương, tối đa 2 con, không va chạm). Khi máu hiển thị đúng ' + v[2] + ' (bị trừ nhảy qua mốc này thì không kích hoạt) hóa Mahogara: 300 máu, x1.8 sát thương va chạm, to 150%, mỗi lần dính va chạm kích hoạt Thích Nghi 4s (giảm 30% → 60% → 90% mọi sát thương, tối đa 3 lần)'; };
+  TX.mg = function (v) { return 'Không có sát thương va chạm; có Megumi thì vòng thu nhỏ chậm thêm 12s. Skill 1 Hắc Bạch Cẩu: mỗi ' + v[0] + 's triệu hồi 1 sói (to 110%, va chạm 15, mỗi 5s hú làm choáng 2s kẻ địch và đồng minh của chúng; tối đa 1 con). Dưới ' + v[1] + ' máu: sói biến mất, chuyển Skill 2 Lôi Ưng: mỗi 3s tạo 1 ưng (to 75%, mỗi 3s bắn tia điện 7 sát thương, tối đa 2 con, không va chạm). Khi máu hiển thị đúng ' + v[2] + ' và giữ nguyên mức đó trong 2s (bị trừ nhảy qua mốc, hoặc mất/hồi máu trong 2s thì không kích hoạt) hóa Mahogara: 300 máu, x1.8 sát thương va chạm, to 150%, mỗi lần dính va chạm kích hoạt Thích Nghi 4s (giảm 30% → 60% → 90% mọi sát thương, tối đa 3 lần)'; };
   TX.jj = function (v) { return 'Bình thường cho đến khi chạm chiêu lửa/nhiệt độ (lửa, dung nham, băng lạnh) thì hóa Tà Nhãn: +' + v[0] + ' máu tối đa, tốc độ x' + v[1] + ', to x' + v[2] + '. Mỗi ' + v[3] + 's vận ' + v[4] + 's rồi đá quả bóng bị nguyền (tím, bay nhanh, nảy tường 1 lần) ' + v[5] + ' sát thương. Gặp Ayase: Ayase có thêm đồng minh Okarun x1.1 sức mạnh'; };
+
+  /* ===== Mô tả 2 tầng: h = tiêu đề 1 dòng (thẻ chọn, HUD) · l = các ý 'Nhãn|nội dung' (bảng sức mạnh) ===== */
+  var TXD = {
+    mg: function (v) { return { h: 'Sói → Lôi Ưng → hóa Mahogara · không va chạm', l: [
+      'Chung|Không gây sát thương va chạm · vòng thu nhỏ chậm thêm 12s',
+      'Skill 1 · Hắc Bạch Cẩu|Mỗi ' + v[0] + 's triệu hồi 1 sói, tối đa 1 con',
+      'Sói|To 110% · va chạm 15 · mỗi 5s hú làm choáng 2s địch và đồng minh của chúng',
+      'Skill 2 · Lôi Ưng|Dưới ' + v[1] + ' máu: sói biến mất, mỗi 3s ra 1 ưng, tối đa 2 con',
+      'Ưng|To 75% · mỗi 3s bắn tia điện 7 sát thương · không va chạm',
+      'Passive ẩn|Máu hiển thị đúng ' + v[2] + ' và giữ 2s thì hóa Mahogara (nhảy qua mốc hoặc đổi máu trong 2s thì hủy)',
+      'Mahogara|300 máu · x1.8 sát thương va chạm · to 150%',
+      'Thích Nghi|Mỗi lần dính va chạm giảm 30% → 60% → 90% mọi sát thương trong 4s (tối đa 3 lần)'] }; },
+    ina: function (v) { return { h: 'Mỗi ' + v[1] + 's hét 1 câu chú ngẫu nhiên vào đối thủ', l: [
+      'Đứng yên|Bất động 5s, không dùng được bất kỳ kỹ năng nào',
+      'Chậm lại|Chậm 35% trong 8s · hồi chiêu +35%',
+      'Chết đi|Hy sinh 75 máu để giết ngay đối thủ Tier ngang hoặc thấp hơn',
+      'Chết đi (Tier cao hơn)|Đổi 50% máu mình lấy 75% máu hiện tại của họ'] }; },
+    gj: function (v) { return { h: 'Mỗi ' + v[0] + 's: Xanh → Đỏ, sau ' + v[4] + ' chu kỳ thì vận Tím', l: [
+      'Xanh|Vùng hút cạnh đối thủ · ' + v[1] + ' sát thương · chậm 40% trong 4.5s',
+      'Đỏ|Quả cầu càng bay xa càng to · ' + v[2] + ' sát thương · đẩy vào tường choáng 2.5s rồi chậm 20% trong 1.5s',
+      'Tím|Vận ' + v[5] + 's rồi bắn tia sáng ~90% bóng · ' + v[3] + ' sát thương'] }; },
+    jj: function (v) { return { h: 'Chạm lửa hoặc nhiệt độ thì hóa Tà Nhãn', l: [
+      'Kích hoạt|Chạm chiêu lửa, dung nham hoặc băng lạnh',
+      'Tà Nhãn|+' + v[0] + ' máu tối đa · tốc độ x' + v[1] + ' · to x' + v[2],
+      'Bóng nguyền|Mỗi ' + v[3] + 's vận ' + v[4] + 's rồi đá bóng tím ' + v[5] + ' sát thương (nhanh, nảy tường 1 lần)',
+      'Gặp Ayase|Ayase có thêm đồng minh Okarun x1.1 sức mạnh'] }; },
+    mk: function (v) { return { h: 'Mỗi ' + v[0] + 's triệu hồi thuộc hạ x' + v[3] + ' sức mạnh', l: [
+      'Thuộc hạ|Bản sao ball Tier A–D, dùng đủ mọi kỹ năng gốc',
+      'Giới hạn|Tối đa ' + v[1] + ' con',
+      'Bù quân|Có con chết thì trong ' + v[2] + 's được triệu hồi bù',
+      'Suy yếu|Chỉ máu và sát thương nhân x' + v[3]] }; },
+    yu: function (v) { return { h: 'Sau ' + v + 's sao chép đối thủ, mạnh hơn x1.2', l: [
+      'Sao chép|Năng lực lẫn chỉ số: máu, sát thương gốc, giáp, tốc độ',
+      'Câu thoại|"Cảm ơn cậu, Rikka"',
+      'Không sao chép được|Nuke, Deathnote, Verity, Consume, Bum'] }; },
+    ok: function (v) { return { h: 'Sau ' + v[0] + 's cường hóa, rồi có Dash', l: [
+      'Cường hóa|+' + v[1] + ' máu tối đa · di chuyển x' + v[2] + ' · sát thương x' + v[3] + ' · nhỏ còn x' + v[4],
+      'Dash|Mỗi ' + v[5] + 's lao vào đối thủ, trúng gây ' + v[6] + ' sát thương',
+      'Gặp Ayase|Cuối trận hiện trái tim, Ayase thắng'] }; },
+    rul: function (v) { return { h: 'Mỗi ' + v[0] + 's vụt thước hình cung · ' + v[1] + ' sát thương', l: [
+      'Thước|Dài gấp đôi đường kính bóng, vụt về hướng đối thủ',
+      'Trúng|' + v[1] + ' sát thương và đẩy ra xa',
+      'Gần tường|Cách tường ≤ 1 đường kính bóng: thêm ' + v[2] + ' sát thương và choáng ' + v[3] + 's'] }; },
+    bd: function (v) { return { h: 'Mỗi ' + v[0] + 's đổi ' + v[1] + ' máu bắn kim máu', l: [
+      'Kim máu|Siêu nhanh, tự dí theo đối thủ, xuyên qua người, nảy tường tối đa 1 lần',
+      'Mỗi lần trúng|' + v[2] + ' sát thương + chảy máu vĩnh viễn ' + v[3] + '/s, cộng dồn',
+      'Cái giá|Mất ' + v[1] + ' máu bản thân mỗi lần bắn'] }; },
+    fsh: function (v) { return { h: 'Mỗi ' + v + 's ném 1 con cá ngẫu nhiên vào địch', l: [
+      'Pufferfish|Độc 3s, 3 sát thương/s', 'Electric Eel|6 sát thương + choáng 2s', 'Moonfish|20 sát thương'] }; },
+    vol: function (v) { return { h: 'Mỗi ' + v[0] + 's dựng núi lửa phun lava', l: [
+      'Núi lửa|Dựng giữa map như bức tường, phun trào ' + v[1] + 's',
+      'Lava|' + v[2] + '–' + v[3] + ' bãi, tồn tại ' + v[5] + 's, ' + v[6] + ' sát thương/s'] }; },
+    ay: function (v) { return { h: 'Mỗi ' + v[0] + 's tay ma nắm và ném đối thủ', l: [
+      'Bàn tay ma|Trong suốt, nắm lấy đối thủ rồi ném vào tường',
+      'Trúng tường|' + v[1] + ' sát thương + choáng ' + v[2] + 's'] }; },
+    nb: function (v) { return { h: 'Khẩu lục ' + v[0] + ' viên, đạn luôn trúng', l: [
+      'Bắn|Mỗi ' + v[1] + 's 1 viên rất nhanh · ' + v[2] + ' sát thương',
+      'Nạp đạn|' + v[3] + 's khi hết đạn',
+      'Va chạm|Chỉ gây 7 sát thương'] }; },
+    tz: function (v) { return { h: 'Trảm: mỗi ' + v + 's chém khí hình cung', l: [
+      'Đường chém|Về phía đối thủ, to dần theo khoảng cách',
+      'Trúng|14 sát thương + chảy máu 1/s (không cộng dồn)'] }; },
+    sv: function () { return { h: 'Mỗi trận random 1 thanh kiếm, nhân sát thương', l: [
+      'Yếu|Gỗ x1.1 · Đá x1.2 · Vàng x0.8', 'Mạnh|Sắt x1.6 · Kim cương x1.8 · Netherite x2'] }; },
+    yn: function (v) { return { h: 'Mỗi ' + v[0] + 's tung xúc xắc gây Depression', l: [
+      'Điều kiện|Ra mặt 3 hoặc 6',
+      'Depression|Chậm ' + Math.round(v[1] * 100) + '% · nhận thêm ' + Math.round(v[1] * 100) + '% sát thương · ' + v[3] + 's',
+      'Cộng dồn|Tối đa ' + v[2] + ' lần'] }; },
+    inf: function (v) { return { h: 'Vô Hạ Hạn: bật ' + v[1] + 's mỗi ' + v[0] + 's', l: [
+      'Hiệu ứng|Không thể bị sát thương hay dính bất kỳ hiệu ứng nào'] }; },
+    ch: function (v) { return { h: 'Nghỉ càng lâu cú đấm càng mạnh (tối đa x' + v + ')', l: [
+      'Nạp đầy|Sau 6s không đánh', 'Báo hiệu|Vòng sáng tiến độ, chữ MAX khi đã đầy'] }; }
+  };
+  [['wd', 'Dây móc nảy tường kéo đối thủ về'], ['dom', 'Mở lãnh địa chém đối thủ'], ['cs', 'Vẽ đường đi quân cờ rồi lao theo'], ['nk', 'Chịu va chạm rồi phát nổ xoá sổ đối thủ'], ['ln', 'Giữ Deathnote, hết giờ đối thủ gần chết'], ['pl', 'Kéo đối thủ lại gần bằng dây']].forEach(function (a) {
+    TXD[a[0]] = function (v) { return { h: a[1], l: ['Chi tiết|' + TX[a[0]](v)] }; };
+  });
   SFXS.dice = function () { [0, 1, 2, 3].forEach(function (i) { noise(0.05, 0.12, 2800 + i * 300, 'bandpass', 2, 0.5, i * 0.07); }); tone(660, 0.08, 'square', 0.05, 0.8, 0.3); };
   SFXS.depress = function () { tone(220, 0.7, 'sine', 0.15, 0.5); tone(165, 0.8, 'triangle', 0.1, 0.5, 0.1); };
   SFXS.howl = function () { tone(380, 1.2, 'sawtooth', 0.14, 1.6, 0, undefined, 5); tone(570, 1.1, 'sine', 0.06, 1.5, 0.05); };
@@ -2197,6 +2284,11 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         }
       }
       if (T >= u.st && T >= u.rt && T >= u.frz && !u.cs && !(u.swl > 0) && !u.fly) {
+        if (c.chs) {   /* dí theo kẻ địch: bẻ lái từ từ + hơi lắc lư, không lao thẳng */
+          var wca = Math.atan2(u.vy, u.vx), wda = Math.atan2(o.y - u.y, o.x - u.x) + Math.sin(T * 3 + i) * 0.35 - wca, wsv = Math.hypot(u.vx, u.vy) || 1, wst;
+          while (wda > 3.1416) wda -= 6.2832; while (wda < -3.1416) wda += 6.2832;
+          wst = Math.max(-c.chs * dt, Math.min(c.chs * dt, wda)); u.vx = Math.cos(wca + wst) * wsv; u.vy = Math.sin(wca + wst) * wsv;
+        }
         var s = Math.hypot(u.vx, u.vy) || 1, sp = 250 * (c.sp || 1) * f * (T < u.slT ? u.slM : 1) * (c.ok && u.okd ? c.ok[2] : 1) * (c.jj && u.ev ? c.jj[1] : 1) * (T < u.depT ? 1 - u.depM * u.dep : 1), m = 1 + (sp / s - 1) * Math.min(1, dt * 2.5);
         u.vx *= m; u.vy *= m; u.x += u.vx * dt; u.y += u.vy * dt;
         hit = bounce(u, lo, hi); if (hit) burst(u.x, u.y, '#ffffff', 3, 140, { g: 0, life: 0.5 });
@@ -2391,6 +2483,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
           sfx('depress'); B.fx.push({ t: 0, x: o.x, y: o.y - 20, v: '😞 Depression x' + o.dep, c: '#7b6fb0', big: 1 }); burst(o.x, o.y, '#5a4f8a', 14, 260, { g: 0 });
         }
       }
+      if (c.mg && !u.mhg && u.mgT > 0) { if (Math.ceil(u.hp) !== c.mg[2]) u.mgT = 0; else if (T >= u.mgT) becomeMahogara(i); }
       if (c.mg && !u.mhg) {
         if (u.hp < c.mg[1]) {
           if (!u.mgp) { u.mgp = 1; B.sm = B.sm.filter(function (z) { return !(z.par === u && z.wolf); }); B.fx.push({ t: 0, x: u.x, y: u.y, v: '⚡ Lôi Ưng!', c: '#ffd60a', big: 1, huge: 1 }); sfx('bolt'); }
@@ -2529,7 +2622,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         if (Math.hypot(o.x - q.x, o.y - q.y) < o.r + q.s) {
           if (B.T >= o.infT) {
             hurt(od, q.d * dmOf(q.i, q), 'red'); var rdA = Math.atan2(o.y - q.y0, o.x - q.x0);
-            o.fly = { vx: Math.cos(rdA) * 1300, vy: Math.sin(rdA) * 1300, t: 0.7, e: { stun: 3, slow: [0.8, 2], txt: '🔴 Choáng 3s', src: 'red' } };
+            o.fly = { vx: Math.cos(rdA) * 1300, vy: Math.sin(rdA) * 1300, t: 0.7, e: { stun: 2.5, slow: [0.8, 1.5], txt: '🔴 Choáng 2.5s', src: 'red' } };
             B.fx.push({ t: 0, x: o.x, y: o.y - 18, v: '🔴 Bị đẩy vào tường!', c: '#ef233c', big: 1 });
           }
           burst(o.x, o.y, '#ef233c', 24, 420); shakeFx(0.5); return false;
@@ -2642,7 +2735,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         if (T >= zo.infT && zd2 < z.r * 2.2) { zo.vx += (z.x - zo.x) / zd2 * 700 * dt; zo.vy += (z.y - zo.y) / zd2 * 700 * dt; }
         if (z.t <= 0) {
           z.done = 1; z.t = 0.4; burst(z.x, z.y, '#4cc9f0', 24, 380); shakeFx(0.3);
-          if (zd2 < z.r + zo.r) { hurt(1 - z.i, z.d * dmOf(z.i, z), 'blue'); slow(zo, 0.6, 5); if (T >= zo.infT) B.fx.push({ t: 0, x: zo.x, y: zo.y - 18, v: '🔵 Chậm 40%', c: '#4cc9f0' }); }
+          if (zd2 < z.r + zo.r) { hurt(1 - z.i, z.d * dmOf(z.i, z), 'blue'); slow(zo, 0.6, 4.5); if (T >= zo.infT) B.fx.push({ t: 0, x: zo.x, y: zo.y - 18, v: '🔵 Chậm 40%', c: '#4cc9f0' }); }
         }
         return true;
       }
@@ -2702,7 +2795,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     if (B.T < u.depT) n *= 1 + u.depM * u.dep;
     if (src === 'fire' && c.jj && !u.ev) jijiEvil(i);
     if (c.mg) {
-      if (!u.mhg && Math.ceil(u.hp - n) === c.mg[2]) { becomeMahogara(i); return; }
+      if (!u.mhg && !(u.mgT > 0) && Math.ceil(u.hp - n) === c.mg[2]) { u.mgT = B.T + 2; B.fx.push({ t: 0, x: u.x, y: u.y - u.r - 8, v: '❗ ' + c.mg[2] + ' máu — giữ 2s!', c: '#ffd60a', big: 1 }); }
       if (u.mhg) {
         n *= 1 - (B.T < u.adT ? [0, 0.3, 0.6, 0.9][u.adL] : 0);
         if (src === 'hit') { u.adL = B.T < u.adT ? Math.min(3, u.adL + 1) : 1; u.adT = B.T + 4; B.fx.push({ t: 0, x: u.x, y: u.y - u.r - 8, v: '☸️ Thích Nghi ' + [0, 30, 60, 90][u.adL] + '%', c: '#ffd60a' }); sfx('shield'); }
@@ -2893,7 +2986,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
         if (cf.inf && B.T < u.infT) tg += '♾️' + Math.ceil(u.infT - B.T) + 's'; if (u.shd) tg += '🛡️'; if (B.T < u.cdT) tg += '⏱️' + Math.ceil(u.cdT - B.T) + 's';
         if (cf.gj) tg += u.prp ? '🟣' + Math.ceil(u.prp.t) + 's' : ['🔵', '🔴', '🔵', '🔴', '🟣'][Math.min(4, u.gjn)];
         if (B.T < u.depT) tg += '😞x' + u.dep;
-        if (cf.mg) tg += u.mhg ? '☸️Mahogara' + (B.T < u.adT ? ' -' + [0, 30, 60, 90][u.adL] + '%' : '') : (u.hp < cf.mg[1] ? '🦅' : '🐺');
+        if (cf.mg) tg += u.mhg ? '☸️Mahogara' + (B.T < u.adT ? ' -' + [0, 30, 60, 90][u.adL] + '%' : '') : (u.hp < cf.mg[1] ? '🦅' : '🐺') + (u.mgT > 0 ? '⏳' + Math.max(0, Math.ceil(u.mgT - B.T)) + 's' : '');
         if (cf.jj && u.ev) tg += '🧿' + (u.chn > 0 ? ' vận ' + Math.max(0, Math.ceil(u.chn - B.T)) + 's' : '');
         if (cf.ch) { var chq2 = Math.min(1, (B.T - u.last) / 6); tg += chq2 >= 1 ? '🔋MAX' : '🔋' + Math.round(chq2 * 100) + '%'; }
         if (u.brn.length) tg += '🔥x' + u.brn.length;
@@ -2961,7 +3054,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     var act = b.getAttribute('data-v');
     if (act === 'close') { closeBvb(); return; }
     if (act === 'recustom') { bvbStart(students.slice(), CUS); return; }
-    if (act === 'setcustom') { closeBvb(); openCm(); return; }
+    if (act === 'setcustom') { closeBvb(); openCm(CUS && CUS.rb); return; }
     if (act === 'again') bvbDone = [];
     bvbStart(bvbPool());
   });
@@ -2997,7 +3090,7 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     $('pvd').setAttribute('data-ball', bslug(b));
     $('pvd').innerHTML = '<div class="dh"><i style="background:' + b[1] + '">' + icoHTML(b) + '</i><div><h3>' + b[0] + ' Ball <u class="tr ' + b[3] + '">Tier ' + b[3] + '</u></h3><small>' + ballTags(b).join(' · ') + '</small></div></div>' +
       '<div class="sbs">' + bar('Máu', 100 * (c.hp || 1), 200, '#2a9d8f') + bar('Tốc độ', 250 * (c.sp || 1), 375, '#4895ef') + bar('Cú đấm', (12 + (c.x || 0)) * (c.dm0 || 1), 17, '#e5383b') + '</div>' +
-      '<h4>Năng lực</h4><ul class="abl">' + descr(c).map(function (d) { return '<li><span>' + d[0] + '</span>' + d[1] + '</li>'; }).join('') + '</ul>' +
+      '<h4>Năng lực</h4><ul class="abl">' + descr(c).map(function (d) { return '<li><span>' + d[0] + '</span><div>' + (d[2] ? '<b class="hd">' + d[1] + '</b><ul class="sub">' + d[2].map(function (x) { var q = x.indexOf('|'); return '<li>' + (q > 0 ? '<b>' + x.slice(0, q) + '</b>' + x.slice(q + 1) : x) + '</li>'; }).join('') + '</ul>' : d[1]) + '</div></li>'; }).join('') + '</ul>' +
       '<h4>Cách nhận biết trên sân</h4><p class="muted">Vòng tròn nhỏ quanh bóng là thanh hồi chiêu (đầy vòng là tung chiêu). Số bay lên có biểu tượng cho biết sát thương đến từ đâu: 👊 cú đấm · 🏹 đạn · 🗡️ lưỡi · 🕳️ bẫy · ☠️ độc · 🌀 tia · ⚡ điện · 🔥 lửa · 💣 bomb · ⚔️ chém · ⛓️ xiềng. Trận đấu BO3 (2 tim), sàn thu nhỏ sau 22s. Cứ 8s có 1 vật phẩm trên sân: 💚 hồi 15 máu · 🛡️ kháng va chạm 1 lần · ⏱️ hồi chiêu -20% trong 6s.</p>';
   }
   function openPv() { $('pv').hidden = false; renderPv(); }
@@ -3014,31 +3107,34 @@ body { background: radial-gradient(1100px 560px at 8% -10%, color-mix(in srgb, v
     var b = BALLS[+$('cmB' + k).value];
     $('cmD' + k).innerHTML = '<u class="tr ' + b[3] + '">' + b[3] + '</u> ' + ballTags(b).join(' · ') + '<br>' + descr(b[2]).map(function (d) { return d[0] + ' ' + esc(d[1]); }).join('<br>');
   }
-  function openCm() {
+  var CMRB = false;
+  function openCm(rb) {
+    CMRB = !!rb; $('cm').classList.toggle('cm-rb', CMRB); $('cmTitle').textContent = CMRB ? 'Chọn người · ball ngẫu nhiên' : 'Trận tự chọn';
     if (students.length < 2) { toast('Cần ít nhất 2 bạn để đấu'); return; }
     var so = students.map(function (s) { return '<option value="' + s.id + '">' + esc(s.name) + '</option>'; }).join(''),
       bo = SORTED.map(function (i) { return '<option value="' + i + '">[' + BALLS[i][3] + '] ' + BALLS[i][0] + '</option>'; }).join('');
     [0, 1].forEach(function (k) {
       $('cmS' + k).innerHTML = so; $('cmB' + k).innerHTML = bo;
-      $('cmS' + k).value = CUS && byId(CUS.s[k]) ? CUS.s[k] : students[k].id; $('cmB' + k).value = CUS ? CUS.b[k] : SORTED[k]; cmDesc(k);
+      $('cmS' + k).value = CUS && byId(CUS.s[k]) ? CUS.s[k] : students[k].id; $('cmB' + k).value = CUS && CUS.b ? CUS.b[k] : SORTED[k]; cmDesc(k);
     });
     $('cm').hidden = false;
   }
   function closeCm() { $('cm').hidden = true; }
   function runCustom() { $('bvb').hidden = false; document.documentElement.style.overflow = 'hidden'; ac(); bvbStart(students.slice(), CUS); }
-  $('cm-open').addEventListener('click', openCm);
+  $('cm-open').addEventListener('click', function () { openCm(false); });
+  $('cm-open2').addEventListener('click', function () { openCm(true); });
   $('cmCancel').addEventListener('click', closeCm);
   $('cmB0').addEventListener('change', function () { cmDesc(0); });
   $('cmB1').addEventListener('change', function () { cmDesc(1); });
   $('cmRand').addEventListener('click', function () {
     var a = Math.floor(Math.random() * students.length), b = (a + 1 + Math.floor(Math.random() * (students.length - 1))) % students.length;
     $('cmS0').value = students[a].id; $('cmS1').value = students[b].id;
-    [0, 1].forEach(function (k) { $('cmB' + k).value = SORTED[Math.floor(Math.random() * SORTED.length)]; cmDesc(k); });
+    if (!CMRB) [0, 1].forEach(function (k) { $('cmB' + k).value = SORTED[Math.floor(Math.random() * SORTED.length)]; cmDesc(k); });
   });
   $('cmGo').addEventListener('click', function () {
     var s0 = $('cmS0').value, s1 = $('cmS1').value;
     if (s0 === s1) { toast('Chọn 2 bạn khác nhau'); return; }
-    CUS = { s: [s0, s1], b: [+$('cmB0').value, +$('cmB1').value] }; closeCm(); runCustom();
+    CUS = { s: [s0, s1], b: CMRB ? null : [+$('cmB0').value, +$('cmB1').value], rb: CMRB }; closeCm(); runCustom();
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('cm').hidden) closeCm(); });
   function togglePause() { if (!BVB || BVB.phase === 'end') return; BVB.pause = !BVB.pause; $('bvpause').textContent = BVB.pause ? '▶' : '⏸'; $('bvpause').setAttribute('aria-label', BVB.pause ? 'Chơi tiếp' : 'Tạm dừng'); }
